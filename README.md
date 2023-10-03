@@ -1,1 +1,1 @@
-The data and code to analyze selection intensity in stage to stage including metastasis in prostate cancer.
+The data and code to analyze selection intensity in lower-risk, higher-risk and metastasis in prostate cancer.
