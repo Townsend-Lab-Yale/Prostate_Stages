@@ -26,7 +26,7 @@ MAF5 <- MAF5[MAF5$Gleason == "Early" | MAF5$Gleason == "Late", ]
 MAF6 <- MAF6[MAF6$Gleason == "Early" | MAF6$Gleason == "Late", ]
 MAF7 <- MAF7[MAF7$Gleason == "Early" | MAF7$Gleason == "Late", ]
 
-# In four of these files , MAF4, MAF5, MAF6 and MAF5, the column "Gleason" is equal to either "Empty" or "Metastasis" (there are no information about Early and Late groups), so they would be removed from the rest of analysis.
+# In four of these files , MAF4, MAF5, MAF6 and MAF7, the column "Gleason" is equal to either "Empty" or "Metastasis" (there are no information about Early and Late groups), so they would be removed from the rest of analysis.
 
 # removing samples where column Problem is equal to NA
 MAF1 <- MAF1[is.na(problem)]
