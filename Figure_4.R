@@ -1,3 +1,10 @@
+library(cancereffectsizeR)
+library(MutationalPatterns)
+library(ces.refset.hg19)
+library(data.table)
+library(scales)
+library(stringr)
+library(ggplot2)
 
 ###Figure_4_SPOP_Primary
 
