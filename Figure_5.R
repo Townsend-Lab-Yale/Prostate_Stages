@@ -121,7 +121,7 @@ bargraph_AR_SI <- ggplot(data=PRAD_results_recurrent, aes(x=reorder(variant_name
   theme(panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) +
   theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank()) +
   geom_text(aes(label=included_with_variant, y=-5000), size = common.text.size) +
-  scale_y_continuous(labels=scientific, breaks = c(0, 5e4, 1e5, 1.5e5, 2e5))
+  scale_y_continuous(labels=scientific, breaks = c(0, 1e4, 2e4, 3e4, 4e4, 5e4, 1e5, 1.5e5, 2e5))
 
 ggsave("AR_recurrent_SI.png", width=8, height=5.25)
 
