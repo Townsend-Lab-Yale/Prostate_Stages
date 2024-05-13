@@ -285,15 +285,15 @@ selection_data_Early_Metastasis$stage <- factor(selection_data_Early_Metastasis$
 ### Making the Figure:
 
 # Rename a specific word in the Name column
-selection_data_Early_Metastasis$stage <- sub("Early", "Lower-risk", selection_data_Early_Metastasis$stage)
-selection_data_Early_Metastasis$stage <- sub("Metastasis", "Metastasis_Lower-risk", selection_data_Early_Metastasis$stage)
-selection_data$stage <- sub("Late", "Higher-risk", selection_data$stage)
-selection_data$stage <- sub("Metastasis", "Metastasis_Higher-risk", selection_data$stage)
+selection_data_Early_Metastasis$stage <- sub("Early", "E → L", selection_data_Early_Metastasis$stage)
+selection_data_Early_Metastasis$stage <- sub("Metastasis", "L → M", selection_data_Early_Metastasis$stage)
+selection_data$stage <- sub("Late", "E → H", selection_data$stage)
+selection_data$stage <- sub("Metastasis", "H → M", selection_data$stage)
 
 combined_selection <- rbind(selection_data_Early_Metastasis, selection_data)
 
 variant_order <- c("CUL3", "SPOP", "PIK3CA", "AKT1", "ATM", "KMT2C", "KMT2D", "FOXA1", "APC", "ROCK1", "RHOA", "MUC16", "TP53", "CTNNB1", "PIK3CB", "AR") 
-stage_order <- c("Lower-risk", "Higher-risk", "Metastasis_Lower-risk", "Metastasis_Higher-risk")
+stage_order <- c("E → L", "E → H", "L → M", "H → M")
 combined_selection$stage <- factor(combined_selection$stage, levels = stage_order)
 
 library(scales)
@@ -306,10 +306,10 @@ distance2 <- 1.0  # Distance between "Metastasis_Lower-risk" and "Lower-risk"
 distance3 <- 1.6  # Distance between "Metastasis_Higher-risk" and "Higher-risk"
 
 
-combined_selection$stage_adjusted <- ifelse(combined_selection$stage == "Lower-risk", 0.1,
-                        ifelse(combined_selection$stage == "Higher-risk", 0.1 + distance1,
-                               ifelse(combined_selection$stage == "Metastasis_Lower-risk", 0.1 + distance1 + distance2,
-                                      ifelse(combined_selection$stage == "Metastasis_Higher-risk", 0.1 + distance1 + distance3,
+combined_selection$stage_adjusted <- ifelse(combined_selection$stage == "E → L", 0.1,
+                        ifelse(combined_selection$stage == "E → H", 0.1 + distance1,
+                               ifelse(combined_selection$stage == "L → M", 0.1 + distance1 + distance2,
+                                      ifelse(combined_selection$stage == "H → M", 0.1 + distance1 + distance3,
                                              NA))))										 
   
 Figure_3 <- ggplot(combined_selection, aes(x = stage_adjusted, y = si, color = stage, linetype = stage)) + 
