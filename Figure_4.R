@@ -112,4 +112,34 @@ bargraph_SPOP_SI <- ggplot(data=PRAD_results_recurrent, aes(x=reorder(variant_na
 
 ggsave("SPOP_recurrent_SI.png", width=8, height=5.25)
 
+
+###Overlay SPOP_labeled_2.png onto SPOP_recurrent_SI.png:
+
+setwd("C:/Moein/projects/prostate_stages/PRAD_files/PRAD_figures/Figures")
+
+library(magick)
+
+# Set the file paths for the two PNG images you want to merge
+file1 <- "SPOP_recurrent_SI.png"
+file2 <- "SPOP_labeled_2.png"
+
+# Read the images
+image1 <- image_read(file1)
+image2 <- image_read(file2)
+
+# Get the dimensions of image1
+width1 <- image_info(image1)$width
+height1 <- image_info(image1)$height
+
+# Calculate the offset to position image2 in the upper right corner of image1
+offset_x <- width1 - image_info(image2)$width
+offset_y <- 0
+
+# Overlay image2 onto image1
+merged_image <- image_composite(image1, image2, offset = paste0("+", offset_x, "+", offset_y))
+
+
+# Write the merged image to a file
+image_write(merged_image, "Figure_4.png")
+
 #End
