@@ -84,6 +84,58 @@ cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, cov
 
 selected_genes <- c("SPOP", "FOXA1", "AR", "PIK3CA", "PIK3CB", "TP53", "ROCK1", "RHOA", "AKT1", "ATM", "CUL3",
                     "APC", "CTNNB1", "MUC16", "KMT2C", "KMT2D")
+# Create compound variant table ----
+# Get consensus coverage across whichever samples you want to include.
+# Here, we use all WES/TGS, but you could choose to exclude some if they don't cover the genes of interest well.
+all_cov = c(cesa_samples_by_groups$coverage_ranges$exome, cesa_samples_by_groups$coverage_ranges$targeted, cesa_samples_by_groups$coverage_ranges$genome)
+
+# Exclude "exome", since typically "exome+" is what's applicable
+all_cov = all_cov[! names(all_cov) == 'exome'] 
+all_cov = Reduce(GenomicRanges::intersect, all_cov)
+
+
+variants <- select_variants(cesa_samples_by_groups, genes = selected_genes, gr = all_cov)
+
+
+# Further filter variants table based on COSMIC oncogene/TSG classification (exclude nonrecurrent except nonsense for TSGs).
+top_TP53 <- variants[gene == "TP53" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
+top_SPOP <- variants[gene == "SPOP" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
+top_ATM <- variants[gene == "ATM" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
+top_CUL3 <- variants[gene == "CUL3" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
+top_APC <- variants[gene == "APC" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
+top_MUC16 <- variants[gene == "MUC16" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
+top_KMT2C <- variants[gene == "KMT2C" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
+top_KMT2D <- variants[gene == "KMT2D" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
+
+top_PIK3CA <- variants[gene == "PIK3CA" & (maf_prevalence >1)]
+top_FOXA1 <- variants[gene == "FOXA1" & (maf_prevalence >1)]
+top_ROCK1 <- variants[gene == "ROCK1" & (maf_prevalence >1)]
+top_RHOA <- variants[gene == "RHOA" & (maf_prevalence >1)]
+top_CTNNB1 <- variants[gene == "CTNNB1" & (maf_prevalence > 1)]
+top_PIK3CB <- variants[gene == "PIK3CB" & (maf_prevalence >1)]
+top_AR <- variants[gene == "AR" & (maf_prevalence >1)]
+top_AKT1 <- variants[gene == "AKT1" & (maf_prevalence >1)]
+
+for_comp <- rbind(top_TP53, 
+                  top_SPOP, 
+                  top_ATM, 
+                  top_CUL3, 
+                  top_APC, 
+                  top_MUC16, 
+                  top_KMT2C, 
+                  top_KMT2D, 
+                  top_PIK3CA,
+                  top_FOXA1,
+                  top_ROCK1,
+                  top_RHOA,
+                  top_CTNNB1,
+                  top_PIK3CB,
+                  top_AR,
+                  top_AKT1)
+
+# Define compound variants to find cancer effect sizes at the gene level and not for individual variants
+compound <- define_compound_variants(cesa = cesa_samples_by_groups, variant_table = for_comp, by = "gene", merge_distance = Inf)
+
 
 RefCDS = ces.refset.hg19$RefCDS
 dndscv_gene_names <- cesa_samples_by_groups$gene_rates$gene
@@ -141,11 +193,6 @@ signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD"
 # estimating trinucleotide mutation rates
 cesa_samples_by_groups <- trinuc_mutation_rates(cesa = cesa_samples_by_groups, signature_set = "COSMIC_v3.2", signature_exclusions = signature_exclusions)
 
-# defining compound variants
-compound <- define_compound_variants(cesa = cesa_samples_by_groups, 
-                                     variant_table = cesa_samples_by_groups$variants |>
-                                       filter(intergenic == F, gene %in% selected_genes),
-                                     by = "gene", merge_distance = Inf)
 
 source("new_sequential_lik.R")
 
@@ -237,12 +284,6 @@ signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD"
 
 # estimating trinucleotide mutation rates
 cesa_samples_by_groups <- trinuc_mutation_rates(cesa = cesa_samples_by_groups, signature_set = "COSMIC_v3.2", signature_exclusions = signature_exclusions)
-
-# defining compound variants
-compound <- define_compound_variants(cesa = cesa_samples_by_groups, 
-                                     variant_table = cesa_samples_by_groups$variants |>
-                                       filter(intergenic == F, gene %in% selected_genes),
-                                     by = "gene", merge_distance = Inf)
 
 source("new_sequential_lik.R")
 
