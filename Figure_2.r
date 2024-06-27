@@ -5,9 +5,9 @@ library(MutationalPatterns)
 library(RColorBrewer)
 library(ggrepel)
 
-
-##Preparing data:
 setwd("C:/Moein/projects/prostate_stages/PRAD_files")
+
+###Preparing data
 
 gleason <- read.delim("C:/Moein/projects/prostate_stages/PRAD_files/gleason.txt")
 
@@ -18,6 +18,33 @@ MAF4 <- preload_maf(maf = "SU2C_final.maf.txt", refset = ces.refset.hg19)
 MAF5 <- preload_maf(maf = "MSK_341_final.maf.txt", refset = ces.refset.hg19)
 MAF6 <- preload_maf(maf = "MSK_410_final.maf.txt", refset = ces.refset.hg19)
 MAF7 <- preload_maf(maf = "MSK_468_final.maf.txt", refset = ces.refset.hg19)
+
+# removing samples where column Problem is equal to NA
+MAF1 <- MAF1[is.na(problem)]
+MAF2 <- MAF2[is.na(problem)]
+MAF3 <- MAF3[is.na(problem)]
+MAF4 <- MAF4[is.na(problem)]
+MAF5 <- MAF5[is.na(problem)]
+MAF6 <- MAF6[is.na(problem)]
+MAF7 <- MAF7[is.na(problem)]
+
+# keeping only samples that do not occur at germline variant sites
+MAF1 <- MAF1[germline_variant_site == F]
+MAF2 <- MAF2[germline_variant_site == F]
+MAF3 <- MAF3[germline_variant_site == F]
+MAF4 <- MAF4[germline_variant_site == F]
+MAF5 <- MAF5[germline_variant_site == F]
+MAF6 <- MAF6[germline_variant_site == F]
+MAF7 <- MAF7[germline_variant_site == F]
+
+# keeping only samples that do not occur in repetitive regions 
+MAF1 <- MAF1[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
+MAF2 <- MAF2[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
+MAF3 <- MAF3[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
+MAF4 <- MAF4[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
+MAF5 <- MAF5[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
+MAF6 <- MAF6[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
+MAF7 <- MAF7[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
 
 ##Create CESAnalysis and load data:
 cesa <- CESAnalysis(refset = "ces.refset.hg19")
@@ -43,7 +70,6 @@ cesa <- load_sample_data(cesa, gleason)
 signature_exclusions = suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
 
 cesa = trinuc_mutation_rates(cesa, ces.refset.hg19$signatures$COSMIC_v3.2,
-                                  signature_extractor = "deconstructSigs",
                                   signature_exclusions = signature_exclusions)
 
 library(ggplot2)
@@ -248,7 +274,6 @@ Pri_Met <- load_sample_data(Pri_Met, Primary_Met)
 signature_exclusions = suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
 
 Pri_Met = trinuc_mutation_rates(Pri_Met, ces.refset.hg19$signatures$COSMIC_v3.2,
-                                  signature_extractor = "deconstructSigs",
                                   signature_exclusions = signature_exclusions)
 
 #defining groups:
@@ -311,7 +336,7 @@ combined_gene_mutrate <-plot_grid(mutrates_early_plot, mutrates_early_metastasis
                                   labels = c("A", "D", "B", "E", "C", "F"), label_size = 12,
                                   align="h", axis="t", nrow=3, ncol=2, rel_heights = c(1,1,1))
 
-ggsave("PRAD_figures/combined_gene_mutrate.png", width = 8, dpi=600, height = 10)
+ggsave("combined_gene_mutrate.png", width = 8, dpi=600, height = 10)
 
 
 #End
