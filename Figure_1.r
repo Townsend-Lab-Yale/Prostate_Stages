@@ -87,8 +87,8 @@ for (grp in receptor_groups) {
   summed_snv_by_group[, (grp) := curr_snv_sum]
 }
 summed_snv_by_group <- as.matrix(summed_snv_by_group)
-colnames(summed_snv_by_group)[c(1, 2, 3)] <- c("Metastases", "Higher-risk", "Lower-risk")
-summed_snv_by_group <- summed_snv_by_group[, c("Lower-risk", "Higher-risk", "Metastases")]
+colnames(summed_snv_by_group)[c(1, 2, 3)] <- c("Metastases", "Higher-grade", "Lower-grade")
+summed_snv_by_group <- summed_snv_by_group[, c("Lower-grade", "Higher-grade", "Metastases")]
 rownames(summed_snv_by_group) <- rownames(snv_counts)
 Figure_1 <- MutationalPatterns::plot_96_profile(summed_snv_by_group, ymax = 0.15)
 ggsave("Figure_1.png", width = 8, height = 6, dpi = 600)
