@@ -188,12 +188,12 @@ selection_data_Early_Late_Metastasis$stage <- factor(selection_data_Early_Late_M
 ### Making the Figure:
 
 # Rename a specific word in the Name column
-selection_data_Early_Late_Metastasis$stage <- sub("Early", "Lower-risk", selection_data_Early_Late_Metastasis$stage)
-selection_data_Early_Late_Metastasis$stage <- sub("Late", "Higher-risk", selection_data_Early_Late_Metastasis$stage)
-selection_data_Early_Late_Metastasis$stage <- sub("Metastasis_Lower-risk", "Metastasis", selection_data_Early_Late_Metastasis$stage)
+selection_data_Early_Late_Metastasis$stage <- sub("Early", "Lower-grade", selection_data_Early_Late_Metastasis$stage)
+selection_data_Early_Late_Metastasis$stage <- sub("Late", "Higher-grade", selection_data_Early_Late_Metastasis$stage)
+selection_data_Early_Late_Metastasis$stage <- sub("Metastasis_Lower-grade", "Metastasis", selection_data_Early_Late_Metastasis$stage)
 
 variant_order <- c("CUL3", "SPOP", "PIK3CA", "AKT1", "ATM", "KMT2C", "KMT2D", "FOXA1", "APC", "ROCK1", "RHOA", "MUC16", "TP53", "CTNNB1", "PIK3CB", "AR") 
-stage_order <- c("Lower-risk", "Higher-risk", "Metastasis")
+stage_order <- c("Lower-grade", "Higher-grade", "Metastasis")
 selection_data_Early_Late_Metastasis$stage <- factor(selection_data_Early_Late_Metastasis$stage, levels = stage_order)
 
 library(scales)
@@ -201,12 +201,12 @@ library(stringr)
 library(dplyr)
 library(ggplot2)
 
-distance1 <- 1.1  # Distance between "Lower-risk" and "Higher-risk"
-distance2 <- 1.0  # Distance between "Metastasis" and "Higher-risk"
+distance1 <- 1.1  # Distance between "Lower-grade" and "Higher-grade"
+distance2 <- 1.0  # Distance between "Metastasis" and "Higher-grade"
 
 
-selection_data_Early_Late_Metastasis$stage_adjusted <- ifelse(selection_data_Early_Late_Metastasis$stage == "Lower-risk", 0.1,
-                        ifelse(selection_data_Early_Late_Metastasis$stage == "Higher-risk", 0.1 + distance1,
+selection_data_Early_Late_Metastasis$stage_adjusted <- ifelse(selection_data_Early_Late_Metastasis$stage == "Lower-grade", 0.1,
+                        ifelse(selection_data_Early_Late_Metastasis$stage == "Higher-grade", 0.1 + distance1,
                                ifelse(selection_data_Early_Late_Metastasis$stage == "Metastasis", 0.1 + distance1 + distance2,
                                              NA)))										 
   
