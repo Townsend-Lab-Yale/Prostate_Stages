@@ -119,8 +119,8 @@ mutrates_early_late_plot <- ggplot()+
         panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank(),
         axis.title = element_text(size=13),
         axis.text = element_text(size=10)) +
-  xlab("Mutation rate in lower-risk tumors") +
-  ylab("Mutation rate in higher-risk tumors") +
+  xlab("Mutation rate in lower-grade tumors") +
+  ylab("Mutation rate in higher-grade tumors") +
   geom_smooth(method="lm", color="navyblue") + 
   geom_abline(slope=1, intercept=0, color = "darkred", linetype = "dashed") +
   scale_x_continuous(labels=scientific, limits=c(0,1.25e-6), breaks=c(0, 5e-7, 1e-6)) +
@@ -143,7 +143,7 @@ mutrates_early_metastasis_plot <- ggplot()+
         panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank(),
         axis.title = element_text(size=13),
         axis.text = element_text(size=10)) +
-  xlab("Mutation rate in lower-risk tumors") +
+  xlab("Mutation rate in lower-grade tumors") +
   ylab("Mutation rate in metastases") +
   geom_smooth(method="lm", color="navyblue") + 
   geom_abline(slope=1, intercept=0, color = "darkred", linetype = "dashed") +
@@ -167,7 +167,7 @@ mutrates_late_metastasis_plot <- ggplot()+
         panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank(),
         axis.title = element_text(size=13),
         axis.text = element_text(size=10)) +
-  xlab("Mutation rate in higher-risk tumors") +
+  xlab("Mutation rate in higher-grade tumors") +
   ylab("Mutation rate in metastases") +
   geom_smooth(method="lm", color="navyblue") + 
   geom_abline(slope=1, intercept=0, color = "darkred", linetype = "dashed") +
@@ -182,7 +182,7 @@ mut_rate_early <- data.frame(gene=cesa@mutrates$gene,
 
 mutrates_early_plot <- ggplot() +
   geom_density(data=mut_rate_early, size = 1, aes(color="lightcoral", x=mutation_rate_early, y=..scaled..))+
-  xlab("Mutation rate in lower-risk tumors") + ylab("Density") +
+  xlab("Mutation rate in lower-grade tumors") + ylab("Density") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         panel.background = element_blank(), axis.line = element_line(color = "black"),
         legend.position="none",
@@ -199,7 +199,7 @@ mut_rate_late <- data.frame(gene=cesa@mutrates$gene,
 
 mutrates_late_plot <- ggplot() +
   geom_density(data=mut_rate_late, size = 1, aes(color="lightcoral", x=mutation_rate_late, y=..scaled..))+
-  xlab("Mutation rate in higher-risk tumors") + ylab("Density") +
+  xlab("Mutation rate in higher-grade tumors") + ylab("Density") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         panel.background = element_blank(), axis.line = element_line(color = "black"),
         legend.position="none",
