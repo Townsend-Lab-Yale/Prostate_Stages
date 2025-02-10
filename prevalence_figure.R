@@ -68,9 +68,9 @@ unique_patient_count_higher <- higher_grade %>%
 unique_patient_count_metastasis <- metastasis %>%
   summarise(Unique_Patient_Count = n_distinct(Unique_Patient_Identifier))
 
+# Define genes of interest
 genes_of_interest <- c("SPOP", "FOXA1", "AR", "PIK3CA", "PIK3CB", "TP53", "ROCK1", "RHOA", "AKT1", "ATM", "CUL3",
                        "APC", "CTNNB1", "MUC16", "KMT2C", "KMT2D")
-
 
 # Filter data for only the genes of interest
 
@@ -101,11 +101,16 @@ metastasis_gene_frequencies <- filtered_metastasis %>%
   summarise(Unique_Patient_Count = n())
 
 # Count unique patients per gene
-
 lower_grade_gene_frequencies <- filtered_lower_grade %>%
   group_by(genes) %>%
-  summarise(Unique_Patient_Count = n()) %>%
-  mutate(Frequency_Percentage = as.numeric((Unique_Patient_Count / 293) * 100))  # Calculate frequency
+  summarise(Unique_Patient_Count = n(), .groups = "drop") %>%
+  mutate(Frequency_Percentage = as.numeric((Unique_Patient_Count / 293) * 100))  # Normalize by total patients
+
+# Ensure all genes are represented, even if missing
+lower_grade_gene_frequencies <- tibble(genes = genes_of_interest) %>%
+  left_join(lower_grade_gene_frequencies, by = "genes") %>%
+  mutate(Unique_Patient_Count = replace_na(Unique_Patient_Count, 0),
+         Frequency_Percentage = replace_na(Frequency_Percentage, 0))
 
 higher_grade_gene_frequencies <- filtered_higher_grade %>%
   group_by(genes) %>%
