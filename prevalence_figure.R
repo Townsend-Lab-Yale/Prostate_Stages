@@ -125,14 +125,40 @@ metastasis_gene_frequencies <- filtered_metastasis %>%
 # Load necessary libraries
 library(ggplot2)
 library(dplyr)
-library(RColorBrewer)
+library(tidyr)
 
+# Combine all datasets into one for grouped plotting
+lower_grade_gene_frequencies$Category <- "Lower Grade"
+higher_grade_gene_frequencies$Category <- "Higher Grade"
+metastasis_gene_frequencies$Category <- "Metastasis"
 
-# Save as high-resolution PNG with lighter colors
-ggsave("gene_prevalence_plot_lighter.png", width = 10, height = 6, dpi = 300)
+# Ensure 'genes' column is character in all datasets
+lower_grade_gene_frequencies <- lower_grade_gene_frequencies %>%
+  mutate(genes = as.character(genes))
 
-# Save as high-resolution TIFF
-ggsave("gene_prevalence_plot_lighter.tiff", width = 10, height = 6, dpi = 600, compression = "lzw")
+higher_grade_gene_frequencies <- higher_grade_gene_frequencies %>%
+  mutate(genes = as.character(genes))
 
+metastasis_gene_frequencies <- metastasis_gene_frequencies %>%
+  mutate(genes = as.character(genes))
+
+# Now combine datasets
+combined_gene_frequencies <- bind_rows(lower_grade_gene_frequencies,
+                                       higher_grade_gene_frequencies,
+                                       metastasis_gene_frequencies)
+
+# Convert Category to a factor for better ordering
+combined_gene_frequencies$Category <- factor(combined_gene_frequencies$Category, 
+                                             levels = c("Lower Grade", "Higher Grade", "Metastasis"))
+
+# Plot grouped bar chart
+ggplot(combined_gene_frequencies, aes(x = genes, y = Frequency_Percentage, fill = Category)) +
+    geom_bar(stat = "identity", position = "dodge", color = "black") +
+    labs(title = "Gene Mutation Frequency in Different Grades",
+         x = "Genes",
+         y = "Frequency Percentage (%)") +
+    scale_fill_manual(values = c("#8dd3c7", "#ffffb3", "#bebada")) +  # Lighter colors for better visibility
+    theme_minimal() +
+    theme(axis.text.x = element_text(angle = 45, hjust = 1))
 
 
