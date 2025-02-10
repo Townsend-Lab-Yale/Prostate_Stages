@@ -126,39 +126,52 @@ metastasis_gene_frequencies <- filtered_metastasis %>%
 library(ggplot2)
 library(dplyr)
 library(tidyr)
+library(ggpubr)  # For better publication-style themes
 
-# Combine all datasets into one for grouped plotting
-lower_grade_gene_frequencies$Category <- "Lower Grade"
-higher_grade_gene_frequencies$Category <- "Higher Grade"
-metastasis_gene_frequencies$Category <- "Metastasis"
-
-# Ensure 'genes' column is character in all datasets
+# Ensure 'genes' is character in all datasets
 lower_grade_gene_frequencies <- lower_grade_gene_frequencies %>%
-  mutate(genes = as.character(genes))
+  mutate(genes = as.character(genes), Category = "Lower Grade")
 
 higher_grade_gene_frequencies <- higher_grade_gene_frequencies %>%
-  mutate(genes = as.character(genes))
+  mutate(genes = as.character(genes), Category = "Higher Grade")
 
 metastasis_gene_frequencies <- metastasis_gene_frequencies %>%
-  mutate(genes = as.character(genes))
+  mutate(genes = as.character(genes), Category = "Metastasis")
 
-# Now combine datasets
+# Combine all datasets
 combined_gene_frequencies <- bind_rows(lower_grade_gene_frequencies,
                                        higher_grade_gene_frequencies,
                                        metastasis_gene_frequencies)
 
-# Convert Category to a factor for better ordering
+# Convert Category to a factor for proper ordering in facets
 combined_gene_frequencies$Category <- factor(combined_gene_frequencies$Category, 
                                              levels = c("Lower Grade", "Higher Grade", "Metastasis"))
 
-# Plot grouped bar chart
+# Set a professional color palette (colorblind-friendly)
+color_palette <- c("#1b9e77", "#d95f02", "#7570b3")  # Distinct & visually appealing
+
+# Create the three-panel faceted bar plot with professional styling
 ggplot(combined_gene_frequencies, aes(x = genes, y = Frequency_Percentage, fill = Category)) +
-    geom_bar(stat = "identity", position = "dodge", color = "black") +
-    labs(title = "Gene Mutation Frequency in Different Grades",
-         x = "Genes",
-         y = "Frequency Percentage (%)") +
-    scale_fill_manual(values = c("#8dd3c7", "#ffffb3", "#bebada")) +  # Lighter colors for better visibility
-    theme_minimal() +
-    theme(axis.text.x = element_text(angle = 45, hjust = 1))
+  geom_bar(stat = "identity", color = "black", width = 0.7) +  # Thin black border for contrast
+  facet_grid(Category ~ ., scales = "fixed") +  # Keeps the same y-axis scale for all panels
+  labs(title = "Mutation Frequency Across Tumor Grades",
+       x = "Genes",
+       y = "Mutation Frequency (%)") +  # Shared y-axis label
+  scale_fill_manual(values = color_palette) +  # High-contrast, professional color scheme
+  theme_pubr(base_size = 16) +  # Professional journal-quality theme
+  theme(
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 14, color = "black"),  # Readable x-axis
+    axis.text.y = element_text(size = 14, color = "black"),
+    axis.title = element_text(size = 18, face = "bold"),
+    strip.text = element_text(size = 18, face = "bold"),  # Panel labels in bold
+    panel.grid.major = element_blank(),  # No distracting grid lines
+    panel.grid.minor = element_blank(),
+    legend.position = "none"  # No legend needed since we have facets
+  )
+
+# Save the high-resolution figure (600 DPI for publication)
+ggsave("Gene_Mutation_Frequency_High_Impact.png", width = 10, height = 12, dpi = 600)
+ggsave("Gene_Mutation_Frequency_High_Impact.tiff", width = 10, height = 12, dpi = 600, compression = "lzw")
+
 
 
