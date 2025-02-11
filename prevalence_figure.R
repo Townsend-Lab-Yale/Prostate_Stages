@@ -1,161 +1,125 @@
+# Load necessary libraries
 library(cancereffectsizeR)
 library(data.table)
 library(ces.refset.hg19)
 library(MutationalPatterns)
 library(RColorBrewer)
 library(ggrepel)
-
-
-setwd("C:/Moein/projects/prostate_stages/PRAD_files")
-
-###Preparing data
-
-gleason <- read.delim("C:/Moein/projects/prostate_stages/PRAD_files/gleason.txt")
-
-MAF1 <- preload_maf(maf = "armenia_final.maf.txt", refset = ces.refset.hg19)
-MAF4 <- preload_maf(maf = "SU2C_final.maf.txt", refset = ces.refset.hg19)
-
-
-# removing samples where column Problem is equal to NA
-MAF1 <- MAF1[is.na(problem)]
-MAF4 <- MAF4[is.na(problem)]
-
-
-# keeping only samples that do not occur at germline variant sites
-MAF1 <- MAF1[germline_variant_site == F]
-MAF4 <- MAF4[germline_variant_site == F]
-
-
-# keeping only samples that do not occur in repetitive regions 
-MAF1 <- MAF1[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
-MAF4 <- MAF4[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
-
-
-
-##Create CESAnalysis and load data:
-cesa <- CESAnalysis(refset = "ces.refset.hg19")
-cesa <- load_maf(cesa = cesa, maf = MAF1, maf_name = "armenia")
-cesa <- load_maf(cesa = cesa, maf = MAF4, maf_name = "SU2C",, coverage = "exome",
-                 covered_regions = "SureSelect_All_Exon_covered_regions.bed",
-                 covered_regions_name = "SureSelect_V4", covered_regions_padding = 100)
-
-
-cesa <- load_sample_data(cesa, gleason)
-
-# Load dplyr package
 library(dplyr)
-
-# Count unique values in "Unique_Patient_Identifier"
-
-
-prevalence <- cesa@maf
-
-prevalence <- prevalence %>%
-  inner_join(gleason, by = "Unique_Patient_Identifier")
-
-
-lower_grade <- prevalence %>% filter(Gleason == "Early")
-higher_grade <- prevalence %>% filter(Gleason == "Late")
-metastasis <- prevalence %>% filter(Gleason == "Metastasis") 
-
-# Count unique patients
-unique_patient_count_lower <- lower_grade %>%
-  summarise(Unique_Patient_Count = n_distinct(Unique_Patient_Identifier))
-
-unique_patient_count_higher <- higher_grade %>%
-  summarise(Unique_Patient_Count = n_distinct(Unique_Patient_Identifier))
-
-unique_patient_count_metastasis <- metastasis %>%
-  summarise(Unique_Patient_Count = n_distinct(Unique_Patient_Identifier))
-
-# Define genes of interest
-genes_of_interest <- c("SPOP", "FOXA1", "AR", "PIK3CA", "PIK3CB", "TP53", "ROCK1", "RHOA", "AKT1", "ATM", "CUL3",
-                       "APC", "CTNNB1", "MUC16", "KMT2C", "KMT2D")
-
-# Filter data for only the genes of interest
-
-filtered_lower_grade <- lower_grade %>%
-  filter(genes %in% genes_of_interest) %>%
-  distinct(Unique_Patient_Identifier, genes)  # Remove duplicate patient-gene entries
-
-filtered_higher_grade <- higher_grade %>%
-  filter(genes %in% genes_of_interest) %>%
-  distinct(Unique_Patient_Identifier, genes)  
-
-filtered_metastasis <- metastasis %>%
-  filter(genes %in% genes_of_interest) %>%
-  distinct(Unique_Patient_Identifier, genes)  
-
-# Count unique patients per gene
-
-lower_grade_gene_frequencies <- filtered_lower_grade %>%
-  group_by(genes) %>%
-  summarise(Unique_Patient_Count = n())
-
-higher_grade_gene_frequencies <- filtered_higher_grade %>%
-  group_by(genes) %>%
-  summarise(Unique_Patient_Count = n())
-
-metastasis_gene_frequencies <- filtered_metastasis %>%
-  group_by(genes) %>%
-  summarise(Unique_Patient_Count = n())
-
-# Count unique patients per gene
-lower_grade_gene_frequencies <- filtered_lower_grade %>%
-  group_by(genes) %>%
-  summarise(Unique_Patient_Count = n(), .groups = "drop") %>%
-  mutate(Frequency_Percentage = as.numeric((Unique_Patient_Count / 293) * 100))  # Normalize by total patients
-
-higher_grade_gene_frequencies <- filtered_higher_grade %>%
-  group_by(genes) %>%
-  summarise(Unique_Patient_Count = n()) %>%
-  mutate(Frequency_Percentage = as.numeric((Unique_Patient_Count / 320) * 100))  # Calculate frequency
-
-metastasis_gene_frequencies <- filtered_metastasis %>%
-  group_by(genes) %>%
-  summarise(Unique_Patient_Count = n()) %>%
-  mutate(Frequency_Percentage = as.numeric((Unique_Patient_Count / 480) * 100))  # Calculate frequency
-
-# Load necessary libraries
 library(ggplot2)
-library(dplyr)
 library(tidyr)
 library(ggpubr)  # For better publication-style themes
 
-# Ensure 'genes' is character in all datasets
+# Set working directory
+setwd("C:/Moein/projects/prostate_stages/PRAD_files")
+
+### Preparing data
+gleason <- read.delim("C:/Moein/projects/prostate_stages/PRAD_files/gleason.txt")
+
+# Load MAF files
+MAF1 <- preload_maf(maf = "armenia_final.maf.txt", refset = ces.refset.hg19)
+MAF4 <- preload_maf(maf = "SU2C_final.maf.txt", refset = ces.refset.hg19)
+
+# Removing samples where column Problem is NA
+MAF1 <- MAF1[is.na(problem)]
+MAF4 <- MAF4[is.na(problem)]
+
+# Keeping only samples that do not occur at germline variant sites
+MAF1 <- MAF1[germline_variant_site == FALSE]
+MAF4 <- MAF4[germline_variant_site == FALSE]
+
+# Keeping only samples that do not occur in repetitive regions
+MAF1 <- MAF1[(repetitive_region == FALSE | cosmic_site_tier %in% 1:3)]
+MAF4 <- MAF4[(repetitive_region == FALSE | cosmic_site_tier %in% 1:3)]
+
+# Create CESAnalysis and load data
+cesa <- CESAnalysis(refset = "ces.refset.hg19")
+cesa <- load_maf(cesa = cesa, maf = MAF1, maf_name = "armenia")
+cesa <- load_maf(cesa = cesa, maf = MAF4, maf_name = "SU2C", coverage = "exome",
+                 covered_regions = "SureSelect_All_Exon_covered_regions.bed",
+                 covered_regions_name = "SureSelect_V4", covered_regions_padding = 100)
+
+cesa <- load_sample_data(cesa, gleason)
+
+# Extract prevalence data
+prevalence <- cesa@maf %>%
+  inner_join(gleason, by = "Unique_Patient_Identifier")
+
+# Classify data into different Gleason grades
+lower_grade <- prevalence %>% filter(Gleason == "Early")
+higher_grade <- prevalence %>% filter(Gleason == "Late")
+metastasis <- prevalence %>% filter(Gleason == "Metastasis")
+
+# Define genes of interest with correct order
+genes_of_interest <- c("SPOP", "TP53", "MUC16", "KMT2C", "FOXA1", "PIK3CA", "ATM", "CTNNB1",
+                       "KMT2D", "CUL3", "AR", "AKT1", "ROCK1", "PIK3CB", "APC", "RHOA")
+
+# Filter data for genes of interest
+filtered_lower_grade <- lower_grade %>%
+  filter(genes %in% genes_of_interest) %>%
+  distinct(Unique_Patient_Identifier, genes)
+
+filtered_higher_grade <- higher_grade %>%
+  filter(genes %in% genes_of_interest) %>%
+  distinct(Unique_Patient_Identifier, genes)
+
+filtered_metastasis <- metastasis %>%
+  filter(genes %in% genes_of_interest) %>%
+  distinct(Unique_Patient_Identifier, genes)
+
+# Count unique patients per gene and normalize frequency
+lower_grade_gene_frequencies <- filtered_lower_grade %>%
+  group_by(genes) %>%
+  summarise(Unique_Patient_Count = n(), .groups = "drop") %>%
+  mutate(Frequency_Percentage = (Unique_Patient_Count / 293) * 100)
+
+higher_grade_gene_frequencies <- filtered_higher_grade %>%
+  group_by(genes) %>%
+  summarise(Unique_Patient_Count = n(), .groups = "drop") %>%
+  mutate(Frequency_Percentage = (Unique_Patient_Count / 320) * 100)
+
+metastasis_gene_frequencies <- filtered_metastasis %>%
+  group_by(genes) %>%
+  summarise(Unique_Patient_Count = n(), .groups = "drop") %>%
+  mutate(Frequency_Percentage = (Unique_Patient_Count / 480) * 100)
+
+# Add Category column
 lower_grade_gene_frequencies <- lower_grade_gene_frequencies %>%
-  mutate(genes = as.character(genes), Category = "Lower Grade")
+  mutate(Category = "Lower Grade")
 
 higher_grade_gene_frequencies <- higher_grade_gene_frequencies %>%
-  mutate(genes = as.character(genes), Category = "Higher Grade")
+  mutate(Category = "Higher Grade")
 
 metastasis_gene_frequencies <- metastasis_gene_frequencies %>%
-  mutate(genes = as.character(genes), Category = "Metastasis")
+  mutate(Category = "Metastasis")
 
-# Combine all datasets
+# Combine datasets
 combined_gene_frequencies <- bind_rows(lower_grade_gene_frequencies,
                                        higher_grade_gene_frequencies,
                                        metastasis_gene_frequencies)
 
-# Convert Category to a factor for proper ordering in facets
-combined_gene_frequencies$Category <- factor(combined_gene_frequencies$Category, 
+# Convert Category to a factor for correct facet order
+combined_gene_frequencies$Category <- factor(combined_gene_frequencies$Category,
                                              levels = c("Lower Grade", "Higher Grade", "Metastasis"))
 
-# Define highlighted genes per category (darker colors)
+# Convert genes to a factor with the correct order
+combined_gene_frequencies$genes <- factor(combined_gene_frequencies$genes, levels = genes_of_interest)
+
+# Define highlighted genes (darker colors)
 highlighted_genes <- list(
   "Lower Grade" = c("ATM", "SPOP", "PIK3CA", "FOXA1"),
   "Higher Grade" = c("SPOP", "PIK3CA", "ATM", "KMT2D", "FOXA1", "APC"),
   "Metastasis" = c("AR")
 )
 
-# Define color palettes for each grade (light and dark versions)
+# Define color palettes (light and dark)
 color_schemes <- list(
   "Lower Grade" = c("lighter" = "#a7d7c5", "darker" = "#11634d"),  # Green shades
   "Higher Grade" = c("lighter" = "#ffcf99", "darker" = "#a53f00"),  # Orange shades
   "Metastasis" = c("lighter" = "#b3a3d6", "darker" = "#4e3d7a")   # Blue shades
 )
 
-# Explicitly assign colors to genes based on category
+# Assign colors to genes based on category
 combined_gene_frequencies <- combined_gene_frequencies %>%
   rowwise() %>%
   mutate(
@@ -167,27 +131,24 @@ combined_gene_frequencies <- combined_gene_frequencies %>%
   ) %>%
   ungroup()
 
-# Create the three-panel faceted bar plot without a title
+# Generate three-panel faceted bar plot (without title)
 ggplot(combined_gene_frequencies, aes(x = genes, y = Frequency_Percentage, fill = Fill_Color)) +
   geom_bar(stat = "identity", color = "black", width = 0.7) +  # Thin black border for contrast
-  facet_grid(Category ~ ., scales = "fixed") +  # Keeps the same y-axis scale for all panels
+  facet_grid(Category ~ ., scales = "fixed") +  # Ensures consistent Y-axis scaling
   labs(x = "Genes", y = "Mutation Frequency (%)") +  # Only X and Y labels, no title
-  scale_fill_identity() +  # **Directly applies precomputed colors**
+  scale_fill_identity() +  # Apply precomputed colors
   theme_pubr(base_size = 16) +  # Professional journal-quality theme
   theme(
-    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 14, color = "black"),  # Readable x-axis
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 14, color = "black"),  # Rotated X-axis labels
     axis.text.y = element_text(size = 14, color = "black"),
     axis.title = element_text(size = 18, face = "bold"),
-    strip.text = element_text(size = 18, face = "bold"),  # Panel labels in bold
-    panel.grid.major = element_blank(),  # No distracting grid lines
+    strip.text = element_text(size = 18, face = "bold"),  # Bold panel labels
+    panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
     legend.position = "none"  # No legend needed since we have facets
   )
 
-# Save the high-resolution figure (600 DPI for publication)
+# Save high-resolution figures
 ggsave("Gene_Mutation_Frequency_High_Impact.png", width = 10, height = 12, dpi = 600)
 ggsave("Gene_Mutation_Frequency_High_Impact.tiff", width = 10, height = 12, dpi = 600, compression = "lzw")
 ggsave("Gene_Mutation_Frequency_High_Impact.pdf", width = 10, height = 12)
-
-
-
