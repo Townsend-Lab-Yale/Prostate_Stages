@@ -167,13 +167,11 @@ combined_gene_frequencies <- combined_gene_frequencies %>%
   ) %>%
   ungroup()
 
-# Create the three-panel faceted bar plot with correct coloring
+# Create the three-panel faceted bar plot without a title
 ggplot(combined_gene_frequencies, aes(x = genes, y = Frequency_Percentage, fill = Fill_Color)) +
   geom_bar(stat = "identity", color = "black", width = 0.7) +  # Thin black border for contrast
   facet_grid(Category ~ ., scales = "fixed") +  # Keeps the same y-axis scale for all panels
-  labs(title = "Mutation Frequency Across Tumor Grades",
-       x = "Genes",
-       y = "Mutation Frequency (%)") +  # Shared y-axis label
+  labs(x = "Genes", y = "Mutation Frequency (%)") +  # Only X and Y labels, no title
   scale_fill_identity() +  # **Directly applies precomputed colors**
   theme_pubr(base_size = 16) +  # Professional journal-quality theme
   theme(
