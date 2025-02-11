@@ -141,17 +141,40 @@ combined_gene_frequencies <- bind_rows(lower_grade_gene_frequencies,
 combined_gene_frequencies$Category <- factor(combined_gene_frequencies$Category, 
                                              levels = c("Lower Grade", "Higher Grade", "Metastasis"))
 
-# Set a professional color palette (colorblind-friendly)
-color_palette <- c("#1b9e77", "#d95f02", "#7570b3")  # Distinct & visually appealing
+# Define highlighted genes per category (darker colors)
+highlighted_genes <- list(
+  "Lower Grade" = c("ATM", "SPOP", "PIK3CA", "FOXA1"),
+  "Higher Grade" = c("SPOP", "PIK3CA", "ATM", "KMT2D", "FOXA1", "APC"),
+  "Metastasis" = c("AR")
+)
 
-# Create the three-panel faceted bar plot with professional styling
-ggplot(combined_gene_frequencies, aes(x = genes, y = Frequency_Percentage, fill = Category)) +
+# Define color palettes for each grade (light and dark versions)
+color_schemes <- list(
+  "Lower Grade" = c("lighter" = "#a7d7c5", "darker" = "#11634d"),  # Green shades
+  "Higher Grade" = c("lighter" = "#ffcf99", "darker" = "#a53f00"),  # Orange shades
+  "Metastasis" = c("lighter" = "#b3a3d6", "darker" = "#4e3d7a")   # Blue shades
+)
+
+# Explicitly assign colors to genes based on category
+combined_gene_frequencies <- combined_gene_frequencies %>%
+  rowwise() %>%
+  mutate(
+    Fill_Color = ifelse(
+      genes %in% highlighted_genes[[Category]],  # Check if gene is highlighted
+      color_schemes[[Category]]["darker"],  # Assign darker color if highlighted
+      color_schemes[[Category]]["lighter"]   # Assign lighter color otherwise
+    )
+  ) %>%
+  ungroup()
+
+# Create the three-panel faceted bar plot with correct coloring
+ggplot(combined_gene_frequencies, aes(x = genes, y = Frequency_Percentage, fill = Fill_Color)) +
   geom_bar(stat = "identity", color = "black", width = 0.7) +  # Thin black border for contrast
   facet_grid(Category ~ ., scales = "fixed") +  # Keeps the same y-axis scale for all panels
   labs(title = "Mutation Frequency Across Tumor Grades",
        x = "Genes",
        y = "Mutation Frequency (%)") +  # Shared y-axis label
-  scale_fill_manual(values = color_palette) +  # High-contrast, professional color scheme
+  scale_fill_identity() +  # **Directly applies precomputed colors**
   theme_pubr(base_size = 16) +  # Professional journal-quality theme
   theme(
     axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 14, color = "black"),  # Readable x-axis
@@ -166,6 +189,7 @@ ggplot(combined_gene_frequencies, aes(x = genes, y = Frequency_Percentage, fill 
 # Save the high-resolution figure (600 DPI for publication)
 ggsave("Gene_Mutation_Frequency_High_Impact.png", width = 10, height = 12, dpi = 600)
 ggsave("Gene_Mutation_Frequency_High_Impact.tiff", width = 10, height = 12, dpi = 600, compression = "lzw")
+ggsave("Gene_Mutation_Frequency_High_Impact.pdf", width = 10, height = 12)
 
 
 
