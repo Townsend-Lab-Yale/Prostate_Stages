@@ -206,8 +206,8 @@ Pri_Met <- gene_mutation_rates(Pri_Met, covariates = "PRAD", samples = Primary_W
 Pri_Met <- gene_mutation_rates(Pri_Met, covariates = "PRAD", samples = Primary_WGS)
 
 #count the number of Syn and nonSyn in each datagroup:
-dndscv_Primary_WES <- cesa$dNdScv_results[[1]]
-dndscv_Primary_WGS <- cesa$dNdScv_results[[2]]
+dndscv_Primary_WES <- Pri_Met$dNdScv_results[[1]]
+dndscv_Primary_WGS <- Pri_Met$dNdScv_results[[2]]
 
 #Save the files:
 write.csv(dndscv_Primary_WES, "dndscv_Primary_WES.csv", row.names = FALSE)
