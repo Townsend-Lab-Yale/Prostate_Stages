@@ -90,6 +90,19 @@ cesa <- gene_mutation_rates(cesa, covariates = "PRAD", samples = Early_WGS)
 cesa <- gene_mutation_rates(cesa, covariates = "PRAD", samples = Late_WES)
 cesa <- gene_mutation_rates(cesa, covariates = "PRAD", samples = Late_WGS)
 
+#count the number of Syn and nonSyn in each datagroup:
+dndscv_Early_WES <- cesa$dNdScv_results[[1]]
+dndscv_Early_WGS <- cesa$dNdScv_results[[2]]
+dndscv_Late_WES <- cesa$dNdScv_results[[3]]
+dndscv_Late_WGS <- cesa$dNdScv_results[[4]]
+
+#Save the files:
+write.csv(dndscv_Early_WES, "dndscv_Early_WES.csv", row.names = FALSE)
+write.csv(dndscv_Early_WGS, "dndscv_Early_WGS.csv", row.names = FALSE)
+write.csv(dndscv_Late_WES, "dndscv_Late_WES.csv", row.names = FALSE)
+write.csv(dndscv_Late_WGS, "dndscv_Late_WGS.csv", row.names = FALSE)
+
+
 threestage_final <- cesa
 saveRDS(threestage_final, file="threestage_final.rds")
 
