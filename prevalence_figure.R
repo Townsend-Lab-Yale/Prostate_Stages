@@ -106,12 +106,6 @@ lower_grade_gene_frequencies <- filtered_lower_grade %>%
   summarise(Unique_Patient_Count = n(), .groups = "drop") %>%
   mutate(Frequency_Percentage = as.numeric((Unique_Patient_Count / 293) * 100))  # Normalize by total patients
 
-# Ensure all genes are represented, even if missing
-lower_grade_gene_frequencies <- tibble(genes = genes_of_interest) %>%
-  left_join(lower_grade_gene_frequencies, by = "genes") %>%
-  mutate(Unique_Patient_Count = replace_na(Unique_Patient_Count, 0),
-         Frequency_Percentage = replace_na(Frequency_Percentage, 0))
-
 higher_grade_gene_frequencies <- filtered_higher_grade %>%
   group_by(genes) %>%
   summarise(Unique_Patient_Count = n()) %>%
