@@ -73,9 +73,9 @@ cesa <- load_maf(cesa = cesa, maf = MAF7, maf_name = "468", coverage = "targeted
 cesa <- load_sample_data(cesa, gleason)
 
 #defining groups:
-Early_groups <- cesa$samples[Gleason == "Early", unique(Unique_Patient_Identifier)]
-Late_groups <- cesa$samples[Gleason == "Late", unique(Unique_Patient_Identifier)]
-Metastasis_groups <- cesa$samples[Gleason == "Metastasis", unique(Unique_Patient_Identifier)]
+Early_groups <- cesa$samples[Gleason == "Early" & coverage == "exome", unique(Unique_Patient_Identifier)]
+Late_groups <- cesa$samples[Gleason == "Late" & coverage == "exome", unique(Unique_Patient_Identifier)]
+Metastasis_groups <- cesa$samples[Gleason == "Metastasis" & coverage == "exome", unique(Unique_Patient_Identifier)]
 
 cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa, covariates = "PRAD", samples = Early_groups, save_all_dndscv_output = T)
 cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, covariates = "PRAD", samples = Late_groups, save_all_dndscv_output = T)
