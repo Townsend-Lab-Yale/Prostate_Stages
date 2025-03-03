@@ -82,7 +82,7 @@ cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, cov
 
 
 selected_genes <- c("SPOP", "FOXA1", "AR", "PIK3CA", "PIK3CB", "TP53", "ROCK1", "RHOA", "AKT1", "ATM", "CUL3",
-                    "APC", "CTNNB1", "MUC16", "KMT2C", "KMT2D")
+                    "APC", "CTNNB1", "PTEN", "KMT2C", "KMT2D")
 
 RefCDS = ces.refset.hg19$RefCDS
 dndscv_gene_names <- cesa_samples_by_groups$gene_rates$gene
@@ -192,7 +192,7 @@ selection_data_Early_Late_Metastasis$stage <- sub("Early", "Lower-grade", select
 selection_data_Early_Late_Metastasis$stage <- sub("Late", "Higher-grade", selection_data_Early_Late_Metastasis$stage)
 selection_data_Early_Late_Metastasis$stage <- sub("Metastasis_Lower-grade", "Metastasis", selection_data_Early_Late_Metastasis$stage)
 
-variant_order <- c("CUL3", "SPOP", "PIK3CA", "AKT1", "ATM", "KMT2C", "KMT2D", "FOXA1", "APC", "ROCK1", "RHOA", "MUC16", "TP53", "CTNNB1", "PIK3CB", "AR") 
+variant_order <- c("CUL3", "SPOP", "PIK3CA", "AKT1", "ATM", "KMT2C", "KMT2D", "FOXA1", "APC", "ROCK1", "RHOA", "PTEN", "TP53", "CTNNB1", "PIK3CB", "AR") 
 stage_order <- c("Lower-grade", "Higher-grade", "Metastasis")
 selection_data_Early_Late_Metastasis$stage <- factor(selection_data_Early_Late_Metastasis$stage, levels = stage_order)
 
