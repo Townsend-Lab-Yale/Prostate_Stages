@@ -83,7 +83,7 @@ cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, cov
 
 
 selected_genes <- c("SPOP", "FOXA1", "AR", "PIK3CA", "PIK3CB", "TP53", "ROCK1", "RHOA", "AKT1", "ATM", "CUL3",
-                    "APC", "CTNNB1", "MUC16", "KMT2C", "KMT2D")
+                    "APC", "CTNNB1", "PTEN", "KMT2C", "KMT2D")
 # Create compound variant table ----
 # Get consensus coverage across whichever samples you want to include.
 # Here, we use all WES/TGS, but you could choose to exclude some if they don't cover the genes of interest well.
@@ -333,7 +333,7 @@ selection_data$stage <- sub("Metastasis", "H → M", selection_data$stage)
 
 combined_selection <- rbind(selection_data_Early_Metastasis, selection_data)
 
-variant_order <- c("CUL3", "SPOP", "PIK3CA", "AKT1", "ATM", "KMT2C", "KMT2D", "FOXA1", "APC", "ROCK1", "RHOA", "MUC16", "TP53", "CTNNB1", "PIK3CB", "AR") 
+variant_order <- c("CUL3", "SPOP", "PIK3CA", "AKT1", "ATM", "KMT2C", "KMT2D", "FOXA1", "APC", "ROCK1", "RHOA", "PTEN", "TP53", "CTNNB1", "PIK3CB", "AR") 
 stage_order <- c("E → L", "E → H", "L → M", "H → M")
 combined_selection$stage <- factor(combined_selection$stage, levels = stage_order)
 
