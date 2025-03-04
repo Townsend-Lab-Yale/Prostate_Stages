@@ -81,6 +81,19 @@ cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, cov
 cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, covariates = "PRAD", samples = Metastasis_groups, save_all_dndscv_output = T)
 
 
+
+#defining groups:
+Early_groups <- cesa$samples[Gleason == "Early", unique(Unique_Patient_Identifier)]
+Late_groups <- cesa$samples[Gleason == "Late", unique(Unique_Patient_Identifier)]
+Metastasis_groups <- cesa$samples[Gleason == "Metastasis", unique(Unique_Patient_Identifier)]
+
+cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa, covariates = "PRAD", samples = Early_groups, save_all_dndscv_output = T)
+cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, covariates = "PRAD", samples = Late_groups, save_all_dndscv_output = T)
+cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, covariates = "PRAD", samples = Metastasis_groups, save_all_dndscv_output = T)
+
+
+
+
 selected_genes <- c("SPOP", "FOXA1", "AR", "PIK3CA", "PIK3CB", "TP53", "ROCK1", "RHOA", "AKT1", "ATM", "CUL3",
                     "APC", "CTNNB1", "PTEN", "KMT2C", "KMT2D")
 
