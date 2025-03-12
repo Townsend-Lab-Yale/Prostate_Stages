@@ -4,9 +4,6 @@ library(scales)
 library(gg.gap)
 library(cowplot)
 library(reshape2)
-
-
-
 library(cancereffectsizeR)
 library(data.table)
 library(ces.refset.hg19)
@@ -91,51 +88,15 @@ signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD"
 # estimating trinucleotide mutation rates
 cesa <- trinuc_mutation_rates(cesa = cesa, signature_set = "COSMIC_v3.2", signature_exclusions = signature_exclusions)
 
-
-
-
-# Clear gene rates and calculate gene rates for all samples (not separated by normal and tumor) for epistasis ----
-#cesa <- clear_gene_rates(cesa_samples_by_groups)
+# calculate gene rates for all samples
 cesa <- gene_mutation_rates(cesa, covariates = "PRAD", save_all_dndscv_output = T)
 
-#dndscv_gene_names <- cesa$gene_rates$gene
-#nsyn_sites <- sapply(RefCDS[dndscv_gene_names], function(x) colSums(x[["L"]])[1])
-
-#samples_in_all <- length(unique(cesa$dNdScv_results$rate_grp_1$annotmuts$sampleID ))
-
-#mut_rate_df <- tibble(gene = cesa$dNdScv_results$rate_grp_1$genemuts$gene_name,
-                      #exp_mu = cesa$dNdScv_results$rate_grp_1$genemuts$exp_syn_cv)
-
-#mut_rate_df$n_syn_sites = nsyn_sites[mut_rate_df$gene]
-
-#mut_rate_df <- mut_rate_df %>% 
-#  mutate(total_mu = (exp_mu / n_syn_sites) / samples_in_all) %>%
-#  select(gene, total_mu) %>%
-#  data.table::setDT()
-
-#cesa <- clear_gene_rates(cesa = cesa)
-#cesa <- set_gene_rates(cesa = cesa, rates = mut_rate_df, missing_genes_take_nearest = T) 
-
-
-
-
-
-#cesa <- ces_epistasis(cesa, variants = compound, run_name = "epistasis_compound_variants_all_samples")
-
-
 cesa <- ces_gene_epistasis(cesa = cesa, genes = selected_genes, variants = "recurrent", run_name = "gene_epistasis_example")
-
-
-
 
 epistasiiiiiis <- cesa$epistasis$gene_epistasis_example
 
 
-save_cesa(cesa = cesa, file = "analysis/eso_cesa_after_analysis.rds")
-
-
-
-
+#save_cesa(cesa = cesa, file = "analysis/eso_cesa_after_analysis.rds")
 
 
 scientific <- function(x){
