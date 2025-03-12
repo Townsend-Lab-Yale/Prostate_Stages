@@ -1,35 +1,38 @@
-library(cancereffectsizeR)
-library(MutationalPatterns)
-library(ces.refset.hg19)
-library(data.table)
-library(scales)
-library(stringr)
 library(ggplot2)
+library(stringr)
+library(scales)
+library(gg.gap)
+library(cowplot)
+library(reshape2)
 
-###Figure_5_AR_Metastasis
+
+
+library(cancereffectsizeR)
+library(data.table)
+library(ces.refset.hg19)
+library(MutationalPatterns)
+library(RColorBrewer)
+library(ggrepel)
+library(readr)
+
+setwd("C:/Moein/projects/prostate_stages/PRAD_files")
 
 ###Preparing data
-MAF1 <- preload_maf(maf = "prad_armenia_final.maf.txt", refset = ces.refset.hg19, keep_extra_columns = "Gleason")
-MAF2 <- preload_maf(maf = "prad_boutros_wgs_final.maf.txt", refset = ces.refset.hg19, keep_extra_columns = "Gleason")
-MAF3 <- preload_maf(maf = "tcga_wgs_final.maf.txt", refset = ces.refset.hg19, keep_extra_columns = "Gleason")
-MAF4 <- preload_maf(maf = "SU2C_PCF_dedup_filtered_11-09-20.maf.txt", refset = ces.refset.hg19, keep_extra_columns = "Gleason")
-MAF5 <- preload_maf(maf = "MSK_Eur Urol_2020-341.maf.txt", refset = ces.refset.hg19, keep_extra_columns = "Gleason")
-MAF6 <- preload_maf(maf = "MSK_Eur Urol_2020-410.maf.txt", refset = ces.refset.hg19, keep_extra_columns = "Gleason")
-MAF7 <- preload_maf(maf = "MSK_Eur Urol_2020-468.maf.txt", refset = ces.refset.hg19, keep_extra_columns = "Gleason")
 
-### keep samples where the column "Gleason" is equal to "Metastasis" 
-MAF1 <- MAF1[MAF1$Gleason == "Metastasis", ]
-MAF2 <- MAF2[MAF2$Gleason == "Metastasis", ]
-MAF3 <- MAF3[MAF3$Gleason == "Metastasis", ]
-MAF4 <- MAF4[MAF4$Gleason == "Metastasis", ]
-MAF5 <- MAF5[MAF5$Gleason == "Metastasis", ]
-MAF6 <- MAF6[MAF6$Gleason == "Metastasis", ]
-MAF7 <- MAF7[MAF7$Gleason == "Metastasis", ]
+gleason <- read.delim("C:/Moein/projects/prostate_stages/PRAD_files/gleason.txt")
 
-# In two of these files, MAF2 and MAF3, the column "Gleason" is equal to "Empty" ("Early" or "Late") (there are no Metastasis), so they would be removed from the rest of analysis.
+MAF1 <- preload_maf(maf = "armenia_final.maf.txt", refset = ces.refset.hg19)
+MAF2 <- preload_maf(maf = "boutros_final.maf.txt", refset = ces.refset.hg19)
+MAF3 <- preload_maf(maf = "tcga_final.maf.txt", refset = ces.refset.hg19)
+MAF4 <- preload_maf(maf = "SU2C_final.maf.txt", refset = ces.refset.hg19)
+MAF5 <- preload_maf(maf = "MSK_341_final.maf.txt", refset = ces.refset.hg19)
+MAF6 <- preload_maf(maf = "MSK_410_final.maf.txt", refset = ces.refset.hg19)
+MAF7 <- preload_maf(maf = "MSK_468_final.maf.txt", refset = ces.refset.hg19)
 
 # removing samples where column Problem is equal to NA
 MAF1 <- MAF1[is.na(problem)]
+MAF2 <- MAF2[is.na(problem)]
+MAF3 <- MAF3[is.na(problem)]
 MAF4 <- MAF4[is.na(problem)]
 MAF5 <- MAF5[is.na(problem)]
 MAF6 <- MAF6[is.na(problem)]
@@ -37,6 +40,8 @@ MAF7 <- MAF7[is.na(problem)]
 
 # keeping only samples that do not occur at germline variant sites
 MAF1 <- MAF1[germline_variant_site == F]
+MAF2 <- MAF2[germline_variant_site == F]
+MAF3 <- MAF3[germline_variant_site == F]
 MAF4 <- MAF4[germline_variant_site == F]
 MAF5 <- MAF5[germline_variant_site == F]
 MAF6 <- MAF6[germline_variant_site == F]
@@ -44,115 +49,460 @@ MAF7 <- MAF7[germline_variant_site == F]
 
 # keeping only samples that do not occur in repetitive regions 
 MAF1 <- MAF1[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
+MAF2 <- MAF2[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
+MAF3 <- MAF3[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
 MAF4 <- MAF4[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
 MAF5 <- MAF5[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
 MAF6 <- MAF6[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
 MAF7 <- MAF7[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
 
-AR1 = CESAnalysis("ces.refset.hg19")
-saveRDS(AR1, file = "AR1.rds")
+###creating CESAnalysis and loading data 
 
-AR2 = load_maf(cesa = AR1, maf = MAF1)
-AR2 = load_maf(cesa = AR2, maf = MAF4, coverage = "exome",
-               covered_regions = "SureSelect_All_Exon_covered_regions.bed", 
-               covered_regions_name = "SureSelect_V4", covered_regions_padding = 100)
-AR2 = load_maf(cesa = AR2, maf = MAF5, coverage = "exome",
-               covered_regions = "msk_341_exons.bed", 
-               covered_regions_name = "MSK_IMPACT_341", covered_regions_padding = 10)
-AR2 = load_maf(cesa = AR2, maf = MAF6, coverage = "exome", 
-               covered_regions = "msk_410_exons.bed",
-               covered_regions_name = "MSK_IMPACT_410", covered_regions_padding = 10)
-AR2 = load_maf(cesa = AR2, maf = MAF7, coverage = "targeted",
-               covered_regions = "msk_468_exons.bed",
-               covered_regions_name = "MSK_IMPACT_468", covered_regions_padding = 10)
+cesa <- CESAnalysis(refset = "ces.refset.hg19")
 
-saveRDS(AR2, file = "AR2.rds")
+cesa <- CESAnalysis(refset = "ces.refset.hg19")
+cesa <- load_maf(cesa = cesa, maf = MAF1, maf_name = "armenia")
+cesa <- load_maf(cesa = cesa, maf = MAF2, maf_name = "boutros", coverage = "genome")
+cesa <- load_maf(cesa = cesa, maf = MAF3, maf_name = "tcga", coverage = "genome")
+cesa <- load_maf(cesa = cesa, maf = MAF4, maf_name = "SU2C",, coverage = "exome",
+                     covered_regions = "SureSelect_All_Exon_covered_regions.bed",
+                     covered_regions_name = "SureSelect_V4", covered_regions_padding = 100)
+cesa <- load_maf(cesa = cesa, maf = MAF5, maf_name = "341", coverage = "targeted", 
+                     covered_regions = "msk_341_exons.bed", 
+                     covered_regions_name = "MSK_IMPACT_341", covered_regions_padding = 10)
+cesa <- load_maf(cesa = cesa, maf = MAF6, maf_name = "410", coverage = "targeted", 
+                     covered_regions = "msk_410_exons.bed", 
+                     covered_regions_name = "MSK_IMPACT_410", covered_regions_padding = 10)
+cesa <- load_maf(cesa = cesa, maf = MAF7, maf_name = "468", coverage = "targeted", 
+                     covered_regions = "msk_468_exons.bed", 
+                     covered_regions_name = "MSK_IMPACT_468", covered_regions_padding = 10)
 
-to_remove = suggest_cosmic_signatures_to_remove(cancer_type = "PRAD")
 
-AR3 = trinuc_mutation_rates(AR2, signature_set = "COSMIC_v3.2",
-                            signature_extractor = "deconstructSigs",
-                            signatures_to_remove = to_remove)
-saveRDS(AR3, file = "AR3.rds")
+cesa <- load_sample_data(cesa, gleason)
 
-AR4 = gene_mutation_rates(AR3, covariates = "PRAD")
-saveRDS(AR4, file = "AR4.rds")
 
-AR_final = ces_variant(AR4, variants = select_variants(AR4, min_freq = 2), model = "sswm")
-saveRDS(AR_final, file="AR_final.rds")
 
-### making the figure:
+selected_genes <- c("SPOP", "FOXA1", "AR", "PIK3CA", "PIK3CB", "TP53", "ROCK1", "RHOA", "AKT1", "ATM", "CUL3",
+                    "APC", "CTNNB1", "PTEN", "KMT2C", "KMT2D")
+
+# infer trinculeotide-context-specific relative rates of SNV mutation from a mutational signature analysis
+signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
+
+# estimating trinucleotide mutation rates
+cesa <- trinuc_mutation_rates(cesa = cesa, signature_set = "COSMIC_v3.2", signature_exclusions = signature_exclusions)
+
+
+
+
+# Clear gene rates and calculate gene rates for all samples (not separated by normal and tumor) for epistasis ----
+#cesa <- clear_gene_rates(cesa_samples_by_groups)
+cesa <- gene_mutation_rates(cesa, covariates = "PRAD", save_all_dndscv_output = T)
+
+#dndscv_gene_names <- cesa$gene_rates$gene
+#nsyn_sites <- sapply(RefCDS[dndscv_gene_names], function(x) colSums(x[["L"]])[1])
+
+#samples_in_all <- length(unique(cesa$dNdScv_results$rate_grp_1$annotmuts$sampleID ))
+
+#mut_rate_df <- tibble(gene = cesa$dNdScv_results$rate_grp_1$genemuts$gene_name,
+                      #exp_mu = cesa$dNdScv_results$rate_grp_1$genemuts$exp_syn_cv)
+
+#mut_rate_df$n_syn_sites = nsyn_sites[mut_rate_df$gene]
+
+#mut_rate_df <- mut_rate_df %>% 
+#  mutate(total_mu = (exp_mu / n_syn_sites) / samples_in_all) %>%
+#  select(gene, total_mu) %>%
+#  data.table::setDT()
+
+#cesa <- clear_gene_rates(cesa = cesa)
+#cesa <- set_gene_rates(cesa = cesa, rates = mut_rate_df, missing_genes_take_nearest = T) 
+
+
+
+
+
+#cesa <- ces_epistasis(cesa, variants = compound, run_name = "epistasis_compound_variants_all_samples")
+
+
+cesa <- ces_gene_epistasis(cesa = cesa, genes = selected_genes, variants = "recurrent", run_name = "gene_epistasis_example")
+
+
+
+
+epistasiiiiiis <- cesa$epistasis$gene_epistasis_example
+
+
+save_cesa(cesa = cesa, file = "analysis/eso_cesa_after_analysis.rds")
+
+
+
+
+
 
 scientific <- function(x){
   ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", label_scientific()(x)))))
 }
 
-common.text.size <- 4
 
-PRAD_analysis <- load_cesa("AR_final.rds")
-PRAD_results <- snv_results(PRAD_analysis)
-PRAD_results <- PRAD_results$selection.1
+###SPOP###
 
-# extract and add the gene names:
-gene_name <- word(PRAD_results$variant_name, sep = "_")
-PRAD_results$gene <- gene_name
+#Select your gene pairs of interest
+SPOP_list <- which(epistasiiiiiis$variant_A == "SPOP" | epistasiiiiiis$variant_B == "SPOP")
 
-# remove "AR_" from variant_name:
-PRAD_results$variant_name <- str_replace(PRAD_results$variant_name, "AR_", "")
+epistatic_change_SPOP <- c()
 
-# keep only the rows where the variant_type == "aac".
-aac <- PRAD_results$variant_type == "aac"
-PRAD_results <- PRAD_results[aac,]
+#Decoupling the gene pairs
+for(x in SPOP_list){
+  gene1_after_gene2 <- unlist(c(as.character("gene1_after_gene2"), as.numeric(epistasiiiiiis[x,5] - epistasiiiiiis[x,3])))
+  gene2_after_gene1 <- unlist(c(as.character("gene2_after_gene1"), as.numeric(epistasiiiiiis[x,6] - epistasiiiiiis[x,4])))
+  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene1", as.character(epistasiiiiiis[x,1]))
+  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene2", as.character(epistasiiiiiis[x,2]))
+  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene1", as.character(epistasiiiiiis[x,1]))
+  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene2", as.character(epistasiiiiiis[x,2]))
+  epistatic_change_SPOP <- rbind(epistatic_change_SPOP, gene1_after_gene2, gene2_after_gene1)
+}
 
-PRAD_results_recurrent <- PRAD_results[order(-selection_intensity),]
-AR_true <- PRAD_results_recurrent$gene == "AR"
-PRAD_results_recurrent <- PRAD_results_recurrent[AR_true,]
+epistatic_change_SPOP <- data.frame(gene = epistatic_change_SPOP[,1], change = as.numeric(epistatic_change_SPOP[,2]))
 
-#########################################################################
+#Separating "Before" and "After"
+epistatic_change_SPOP_before <- epistatic_change_SPOP[grep("SPOP_", epistatic_change_SPOP[,1]),]
+epistatic_change_SPOP_before$time <- rep("Before", 15)
+epistatic_change_SPOP_before <- epistatic_change_SPOP_before[order(epistatic_change_SPOP_before$change),]
+epistatic_change_SPOP_after <- epistatic_change_SPOP[grep("_SPOP", epistatic_change_SPOP[,1]),]
+epistatic_change_SPOP_after$time <- rep("After", 15)
+epistatic_change_SPOP_after <- epistatic_change_SPOP_after[order(epistatic_change_SPOP_after$change),]
 
-bargraph_AR_SI <- ggplot(data=PRAD_results_recurrent, aes(x=reorder(variant_name, -selection_intensity), y=selection_intensity, fill=selection_intensity))+
-  geom_bar(stat="identity") +
-  geom_errorbar(aes(ymin=ci_low_95, ymax=ci_high_95), width=0.333) +
-  theme(axis.text.x = element_text (hjust = 1, angle = 45)) +
-  xlab("AR amino acid substitution (and prevalence)") + ylab("Scaled selection coefficient") +
-  scale_fill_gradient(low="gold", high="red2") +
-  theme(legend.position = "none")+
-  theme(panel.background = element_blank()) +
-  theme(panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) +
-  theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank()) +
-  geom_text(aes(label=included_with_variant, y=-5000), size = common.text.size) +
-  scale_y_continuous(labels=scientific, breaks = c(0, 1e4, 2e4, 3e4, 4e4, 5e4, 1e5, 1.5e5, 2e5))
-
-ggsave("AR_recurrent_SI.png", width=8, height=5.25)
-
-###Overlay AR_labeled_2.png onto AR_recurrent_SI.png:
-
-setwd("C:/Moein/projects/prostate_stages/PRAD_files/PRAD_figures/Figures")
-
-library(magick)
-
-# Set the file paths for the two PNG images you want to merge
-file1 <- "AR_recurrent_SI.png"
-file2 <- "AR_labeled_2.png"
-
-# Read the images
-image1 <- image_read(file1)
-image2 <- image_read(file2)
-
-# Get the dimensions of image1
-width1 <- image_info(image1)$width
-height1 <- image_info(image1)$height
-
-# Calculate the offset to position image2 in the upper right corner of image1
-offset_x <- width1 - image_info(image2)$width
-offset_y <- 0
-
-# Overlay image2 onto image1
-merged_image <- image_composite(image1, image2, offset = paste0("+", offset_x, "+", offset_y))
+#Need to have extra underscore to have unique names
+epistatic_change_SPOP_before[,1] <- sub("SPOP_after_", "", epistatic_change_SPOP_before[,1])
+epistatic_change_SPOP_after[,1] <- sub("after_SPOP", "", epistatic_change_SPOP_after[,1])
 
 
-# Write the merged image to a file
-image_write(merged_image, "Figure_5.png")
 
 
-#End
+
+
+
+
+
+
+desired_order <- c("TP53", "AR", "PIK3CA", "AKT1", "KMT2C", "CUL3", "PIK3CB", "ATM",
+                   "KMT2D", "FOXA1", "APC", "PTEN", "ROCK1", "RHOA", "CTNNB1", "BLANK",
+                   "CUL3_", "ROCK1_", "CTNNB1_", "PIK3CB_", "PTEN_", "ATM_",
+                   "KMT2D_", "KMT2C_", "TP53_", "FOXA1_", "APC_", "PIK3CA_", "AR_",
+                   "AKT1_", "RHOA_")
+
+
+
+desired_order <- c("AKT1", "KMT2C", "CUL3", "PIK3CB", "ATM",
+                   "KMT2D", "APC", "ROCK1", "PTEN", "FOXA1", "TP53", "CTNNB1", "AR", "PIK3CA", "RHOA", 
+                   "CUL3_", "ROCK1_", "PIK3CB_", "PIK3CA_", "AR_", "ATM_", "APC_", "TP53_",  "KMT2D_", "CTNNB1_", "KMT2C_", 
+                   "PTEN_",  "FOXA1_", "AKT1_", "RHOA_")
+
+# Set the factor levels for 'gene' in the desired order
+epistatic_change_SPOP$gene <- factor(epistatic_change_SPOP$gene, levels = desired_order)
+
+# Generate gene labels, removing underscores
+gene_labels_SPOP <- sub("_", "", desired_order)
+
+# Create the waterfall plot
+waterfall_SPOP <- ggplot(epistatic_change_SPOP, aes(x = gene, y = change, fill = time)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  theme_classic() +
+  scale_fill_manual(values = c("#F8766D", "#00BFC4")) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
+        axis.line.x = element_blank(),
+        legend.position = "bottom",
+        legend.title = element_blank()) +
+  ggtitle("SPOP Gene Pairs") +
+  xlab("Gene") +
+  ylab("Epistatic Change in Selection") +
+  scale_x_discrete(labels = gene_labels_SPOP) +
+  scale_y_continuous(labels = scales::scientific) +
+  geom_hline(yintercept = 0)
+
+# Display the plot
+print(waterfall_SPOP)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#Blank spot
+blank <- data.frame(gene = "BLANK", change = -5000, time = "Before")
+
+epistatic_change_SPOP <- rbind(epistatic_change_SPOP_before, blank, epistatic_change_SPOP_after)
+
+epistatic_change_SPOP$gene <- factor(epistatic_change_SPOP$gene,
+                                     levels = c("TP53", "AR", "PIK3CA", "AKT1", "KMT2C", "CUL3", "PIK3CB", "ATM",
+                                                "KMT2D", "FOXA1", "APC", "PTEN", "ROCK1", "RHOA", "CTNNB1", "BLANK",
+                                                "CUL3_", "ROCK1_", "CTNNB1_", "PIK3CB_", "PTEN_", "ATM_",
+                                                "KMT2D_", "KMT2C_", "TP53_", "FOXA1_", "APC_", "PIK3CA_", "AR_",
+                                                "AKT1_", "RHOA_"))
+
+
+
+desired_order <- c("AKT1", "KMT2C", "CUL3", "PIK3CB", "ATM",
+                   "KMT2D", "APC", "ROCK1", "PTEN", "FOXA1", "TP53", "CTNNB1", "AR", "PIK3CA", "RHOA", 
+                   "CUL3_", "ROCK1_", "PIK3CB_", "PIK3CA_", "AR_", "ATM_", "APC_", "TP53_",  "KMT2D_", "CTNNB1_", "KMT2C_", 
+                   "PTEN_",  "FOXA1_", "AKT1_", "RHOA_")
+
+
+
+gene_labels_SPOP <- c(epistatic_change_SPOP_before$gene, "", epistatic_change_SPOP_after$gene)
+gene_labels_SPOP <- sub("_", "", gene_labels_SPOP)
+
+waterfall_SPOP <- ggplot(epistatic_change_SPOP, aes(x= gene, y=change, fill=time)) +
+  geom_bar(stat = "identity", position = "dodge") + theme_classic() +
+  scale_fill_manual(values = c("#F8766D","#00BFC4"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), axis.line.x = element_blank(),
+        legend.position = "bottom", legend.title = element_blank()) +
+  ggtitle("SPOP gene pairs") + xlab("Gene") + ylab ("Epistatic change in selection")+
+  scale_x_discrete(labels = gene_labels_SPOP) + scale_fill_discrete(breaks = c("Before", "After"))+
+  scale_y_continuous(labels = scientific) +
+  geom_hline(yintercept = 0)
+
+waterfall_SPOP
+ggsave("PRAD_figures/epistasis_16/waterfall_SPOP.png", width = 10, dpi=300, height = 7)
+
+###PIK3CA###
+
+#Select your gene pairs of interest
+PIK3CA_list <- which(epistasiiiiiis$variant_A == "PIK3CA" | epistasiiiiiis$variant_B == "PIK3CA")
+
+epistatic_change_PIK3CA <- c()
+
+#Decoupling the gene pairs
+for(x in PIK3CA_list){
+  gene1_after_gene2 <- unlist(c(as.character("gene1_after_gene2"), as.numeric(epistasiiiiiis[x,5] - epistasiiiiiis[x,3])))
+  gene2_after_gene1 <- unlist(c(as.character("gene2_after_gene1"), as.numeric(epistasiiiiiis[x,6] - epistasiiiiiis[x,4])))
+  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene1", as.character(epistasiiiiiis[x,1]))
+  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene2", as.character(epistasiiiiiis[x,2]))
+  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene1", as.character(epistasiiiiiis[x,1]))
+  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene2", as.character(epistasiiiiiis[x,2]))
+  epistatic_change_PIK3CA <- rbind(epistatic_change_PIK3CA, gene1_after_gene2, gene2_after_gene1)
+}
+
+epistatic_change_PIK3CA <- data.frame(gene = epistatic_change_PIK3CA[,1], change = as.numeric(epistatic_change_PIK3CA[,2]))
+
+#Separating "Before" and "After"
+epistatic_change_PIK3CA_before <- epistatic_change_PIK3CA[grep("PIK3CA_", epistatic_change_PIK3CA[,1]),]
+epistatic_change_PIK3CA_before$time <- rep("Before", 15)
+epistatic_change_PIK3CA_before <- epistatic_change_PIK3CA_before[order(epistatic_change_PIK3CA_before$change),]
+epistatic_change_PIK3CA_after <- epistatic_change_PIK3CA[grep("_PIK3CA", epistatic_change_PIK3CA[,1]),]
+epistatic_change_PIK3CA_after$time <- rep("After", 15)
+epistatic_change_PIK3CA_after <- epistatic_change_PIK3CA_after[order(epistatic_change_PIK3CA_after$change),]
+
+#Need to have extra underscore to have unique names
+epistatic_change_PIK3CA_before[,1] <- sub("PIK3CA_after_", "", epistatic_change_PIK3CA_before[,1])
+epistatic_change_PIK3CA_after[,1] <- sub("after_PIK3CA", "", epistatic_change_PIK3CA_after[,1])
+
+#Blank spot
+blank <- data.frame(gene = "BLANK", change = -5000, time = "Before")
+
+epistatic_change_PIK3CA <- rbind(epistatic_change_PIK3CA_before, blank, epistatic_change_PIK3CA_after)
+
+epistatic_change_PIK3CA$gene <- factor(epistatic_change_PIK3CA$gene,
+                                     levels = c("TP53", "AR", "AKT1", "PIK3CB", "CUL3", "APC", "KMT2D", "ATM",
+                                                "RHOA", "PTEN", "ROCK1", "SPOP", "CTNNB1", "FOXA1", "KMT2C", "BLANK",
+                                                "CUL3_", "ROCK1_", "SPOP_", "RHOA_", "AKT1_", "PIK3CB_",
+                                                "PTEN_", "ATM_", "APC_", "FOXA1_", "KMT2D_", "KMT2C_", "CTNNB1_",
+                                                "TP53_", "AR_"))
+
+gene_labels_PIK3CA <- c(epistatic_change_PIK3CA_before$gene, "", epistatic_change_PIK3CA_after$gene)
+gene_labels_PIK3CA <- sub("_", "", gene_labels_PIK3CA)
+
+waterfall_PIK3CA <- ggplot(epistatic_change_PIK3CA, aes(x= gene, y=change, fill=time)) +
+  geom_bar(stat = "identity", position = "dodge") + theme_classic() +
+  scale_fill_manual(values = c("#F8766D","#00BFC4"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), axis.line.x = element_blank(),
+        legend.position = "bottom", legend.title = element_blank()) +
+  ggtitle("PIK3CA gene pairs") + xlab("Gene") + ylab ("Epistatic change in selection")+
+  scale_x_discrete(labels = gene_labels_PIK3CA) + scale_fill_discrete(breaks = c("Before", "After"))+
+  scale_y_continuous(labels = scientific) +
+  geom_hline(yintercept = 0)
+
+waterfall_PIK3CA
+ggsave("PRAD_figures/epistasis_16/waterfall_PIK3CA.png", width = 10, dpi=300, height = 7)
+
+###TP53###
+
+#Select your gene pairs of interest
+TP53_list <- which(epistasiiiiiis$variant_A == "TP53" | epistasiiiiiis$variant_B == "TP53")
+
+epistatic_change_TP53 <- c()
+
+#Decoupling the gene pairs
+for(x in TP53_list){
+  gene1_after_gene2 <- unlist(c(as.character("gene1_after_gene2"), as.numeric(epistasiiiiiis[x,5] - epistasiiiiiis[x,3])))
+  gene2_after_gene1 <- unlist(c(as.character("gene2_after_gene1"), as.numeric(epistasiiiiiis[x,6] - epistasiiiiiis[x,4])))
+  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene1", as.character(epistasiiiiiis[x,1]))
+  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene2", as.character(epistasiiiiiis[x,2]))
+  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene1", as.character(epistasiiiiiis[x,1]))
+  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene2", as.character(epistasiiiiiis[x,2]))
+  epistatic_change_TP53 <- rbind(epistatic_change_TP53, gene1_after_gene2, gene2_after_gene1)
+}
+
+epistatic_change_TP53 <- data.frame(gene = epistatic_change_TP53[,1], change = as.numeric(epistatic_change_TP53[,2]))
+
+#Separating "Before" and "After"
+epistatic_change_TP53_before <- epistatic_change_TP53[grep("TP53_", epistatic_change_TP53[,1]),]
+epistatic_change_TP53_before$time <- rep("Before", 15)
+epistatic_change_TP53_before <- epistatic_change_TP53_before[order(epistatic_change_TP53_before$change),]
+epistatic_change_TP53_after <- epistatic_change_TP53[grep("_TP53", epistatic_change_TP53[,1]),]
+epistatic_change_TP53_after$time <- rep("After", 15)
+epistatic_change_TP53_after <- epistatic_change_TP53_after[order(epistatic_change_TP53_after$change),]
+
+#Need to have extra underscore to have unique names
+epistatic_change_TP53_before[,1] <- sub("TP53_after_", "", epistatic_change_TP53_before[,1])
+epistatic_change_TP53_after[,1] <- sub("after_TP53", "", epistatic_change_TP53_after[,1])
+
+#Blank spot
+blank <- data.frame(gene = "BLANK", change = -5000, time = "Before")
+
+epistatic_change_TP53 <- rbind(epistatic_change_TP53_before, blank, epistatic_change_TP53_after)
+
+epistatic_change_TP53$gene <- factor(epistatic_change_TP53$gene,
+                                     levels = c("AKT1", "KMT2D", "RHOA", "AR", "PTEN", "ROCK1", "FOXA1", "SPOP",
+                                                "ATM", "CTNNB1", "PIK3CA", "CUL3", "PIK3CB", "APC", "KMT2C", "BLANK",
+                                                "CUL3_", "ROCK1_", "SPOP_", "RHOA_", "CTNNB1_", "PIK3CA_", "AKT1_",
+                                                "APC_", "FOXA1_", "KMT2D_", "PIK3CB_", "KMT2C_", "ATM_", "AR_", "PTEN_"))
+
+
+gene_labels_TP53 <- c(epistatic_change_TP53_before$gene, "", epistatic_change_TP53_after$gene)
+gene_labels_TP53 <- sub("_", "", gene_labels_TP53)
+
+waterfall_TP53 <- ggplot(epistatic_change_TP53, aes(x= gene, y=change, fill=time)) +
+  geom_bar(stat = "identity", position = "dodge") + theme_classic() +
+  scale_fill_manual(values = c("#F8766D","#00BFC4"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), axis.line.x = element_blank(),
+        legend.position = "bottom", legend.title = element_blank()) +
+  ggtitle("TP53 gene pairs") + xlab("Gene") + ylab ("Epistatic change in selection")+
+  scale_x_discrete(labels = gene_labels_TP53) + scale_fill_discrete(breaks = c("Before", "After"))+
+  scale_y_continuous(labels = scientific, breaks = c(-2e4,-1.5e4, -1e4, 0, 1e4), limits = c(-2.5e4,1e4)) +
+  geom_hline(yintercept = 0)
+
+waterfall_TP53
+ggsave("PRAD_figures/epistasis_16/waterfall_TP53.png", width = 10, dpi=300, height = 7)
+
+
+###AR###
+
+#Select your gene pairs of interest
+AR_list <- which(epistasiiiiiis$variant_A == "AR" | epistasiiiiiis$variant_B == "AR")
+
+epistatic_change_AR <- c()
+
+#Decoupling the gene pairs
+for(x in AR_list){
+  gene1_after_gene2 <- unlist(c(as.character("gene1_after_gene2"), as.numeric(epistasiiiiiis[x,5] - epistasiiiiiis[x,3])))
+  gene2_after_gene1 <- unlist(c(as.character("gene2_after_gene1"), as.numeric(epistasiiiiiis[x,6] - epistasiiiiiis[x,4])))
+  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene1", as.character(epistasiiiiiis[x,1]))
+  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene2", as.character(epistasiiiiiis[x,2]))
+  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene1", as.character(epistasiiiiiis[x,1]))
+  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene2", as.character(epistasiiiiiis[x,2]))
+  epistatic_change_AR <- rbind(epistatic_change_AR, gene1_after_gene2, gene2_after_gene1)
+}
+
+epistatic_change_AR <- data.frame(gene = epistatic_change_AR[,1], change = as.numeric(epistatic_change_AR[,2]))
+
+#Separating "Before" and "After"
+epistatic_change_AR_before <- epistatic_change_AR[grep("AR_", epistatic_change_AR[,1]),]
+epistatic_change_AR_before$time <- rep("Before", 15)
+epistatic_change_AR_before <- epistatic_change_AR_before[order(-epistatic_change_AR_before$change),]
+epistatic_change_AR_after <- epistatic_change_AR[grep("_AR", epistatic_change_AR[,1]),]
+epistatic_change_AR_after$time <- rep("After", 15)
+epistatic_change_AR_after <- epistatic_change_AR_after[order(-epistatic_change_AR_after$change),]
+
+#Need to have extra underscore to have unique names
+epistatic_change_AR_before[,1] <- sub("AR_after_", "", epistatic_change_AR_before[,1])
+epistatic_change_AR_after[,1] <- sub("after_AR", "", epistatic_change_AR_after[,1])
+
+#Blank spot
+blank <- data.frame(gene = "BLANK", change = 0, time = "Before")
+
+epistatic_change_AR <- rbind(epistatic_change_AR_before, blank, epistatic_change_AR_after)
+
+epistatic_change_AR$gene <- factor(epistatic_change_AR$gene,
+                                   levels = c("PTEN", "ROCK1", "AKT1", "KMT2C", "CUL3", "PIK3CB", "APC", "RHOA", "TP53",
+                                              "FOXA1", "CTNNB1", "PIK3CA", "SPOP", "ATM", "KMT2D", "BLANK", "CUL3_",
+                                              "ROCK1_", "SPOP_", "RHOA_", "AKT1_", "PIK3CB_", "PIK3CA_", "APC_",
+                                              "TP53_", "FOXA1_", "CTNNB1_", "KMT2D_", "KMT2C_", "PTEN_", "ATM_"))
+
+gene_labels_AR <- sub("_", "", c("PTEN", "ROCK1", "AKT1", "KMT2C", "CUL3", "PIK3CB", "APC", "RHOA", "TP53",
+                                 "FOXA1", "CTNNB1", "PIK3CA", "SPOP", "ATM", "KMT2D", "BLANK", "CUL3_",
+                                 "ROCK1_", "SPOP_", "RHOA_", "AKT1_", "PIK3CB_", "PIK3CA_", "APC_",
+                                 "TP53_", "FOXA1_", "CTNNB1_", "KMT2D_", "KMT2C_", "PTEN_", "ATM_"))
+
+waterfall_AR <- ggplot(epistatic_change_AR, aes(x= gene, y=change, fill=time)) +
+  geom_bar(stat = "identity", position = "dodge") + theme_classic() +
+  scale_fill_manual(values = c("#F8766D","#00BFC4"))+
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), axis.line.x = element_blank(),
+        legend.position = "bottom", legend.title = element_blank()) +
+  ggtitle("AR gene pairs") + xlab("Gene") + ylab ("Epistatic change in selection")+
+  scale_x_discrete(labels = gene_labels_AR) +
+  scale_fill_discrete(breaks = c("Before", "After"))+
+  scale_y_continuous(labels = scientific, limits = c(-3e4, 3e4), breaks = c(-2e4, -1.5e4, 0, 2e4, 2.8e4)) +
+  geom_hline(yintercept = 0)
+
+waterfall_AR
+
+ggsave("PRAD_figures/epistasis_16/waterfall_AR.png", width = 10, dpi=300, height = 7)
+
+###############################################
+
+combined_waterfall <- plot_grid(waterfall_SPOP, waterfall_PIK3CA, waterfall_TP53, waterfall_AR,
+                                labels = c("A", "B", "C", "D"), ncol = 2)
+
+combined_waterfall
+
+ggsave("PRAD_figures/epistasis_16/combined_waterfall.png", width = 10, dpi=300, height = 7.5)
+
+
+
+
+
+
+
+
+
+# Clear gene rates and calculate gene rates for all samples (not separated by normal and tumor) for epistasis ----
+cesa <- clear_gene_rates(cesa)
+cesa <- gene_mutation_rates(cesa, covariates = "ESCA", save_all_dndscv_output = T)
+
+dndscv_gene_names <- cesa$gene_rates$gene
+nsyn_sites <- sapply(RefCDS[dndscv_gene_names], function(x) colSums(x[["L"]])[1])
+
+samples_in_all <- length(unique(cesa$dNdScv_results$rate_grp_1$annotmuts$sampleID ))
+
+mut_rate_df <- tibble(gene = cesa$dNdScv_results$rate_grp_1$genemuts$gene_name,
+                      exp_mu = cesa$dNdScv_results$rate_grp_1$genemuts$exp_syn_cv)
+
+mut_rate_df$n_syn_sites = nsyn_sites[mut_rate_df$gene]
+
+mut_rate_df <- mut_rate_df %>% 
+  mutate(total_mu = (exp_mu / n_syn_sites) / samples_in_all) %>%
+  select(gene, total_mu) %>%
+  data.table::setDT()
+
+cesa <- clear_gene_rates(cesa = cesa)
+cesa <- set_gene_rates(cesa = cesa, rates = mut_rate_df, missing_genes_take_nearest = T) 
+
+
+cesa <- ces_epistasis(cesa, variants = compound, run_name = "epistasis_compound_variants_all_samples")
+
+
+save_cesa(cesa = cesa, file = "analysis/eso_cesa_after_analysis.rds")
