@@ -77,8 +77,6 @@ cesa <- load_maf(cesa = cesa, maf = MAF7, maf_name = "468", coverage = "targeted
 
 cesa <- load_sample_data(cesa, gleason)
 
-
-
 selected_genes <- c("SPOP", "FOXA1", "AR", "PIK3CA", "PIK3CB", "TP53", "ROCK1", "RHOA", "AKT1", "ATM", "CUL3",
                     "APC", "CTNNB1", "PTEN", "KMT2C", "KMT2D")
 
@@ -95,14 +93,9 @@ cesa <- ces_gene_epistasis(cesa = cesa, genes = selected_genes, variants = "recu
 
 epistasiiiiiis <- cesa$epistasis$gene_epistasis_example
 
-
-#save_cesa(cesa = cesa, file = "analysis/eso_cesa_after_analysis.rds")
-
-
 scientific <- function(x){
   ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", label_scientific()(x)))))
 }
-
 
 ###SPOP###
 
