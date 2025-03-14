@@ -269,12 +269,10 @@ blank <- data.frame(gene = "BLANK", change = -5000, time = "Before")
 
 epistatic_change_PIK3CA <- rbind(epistatic_change_PIK3CA_before, blank, epistatic_change_PIK3CA_after)
 
+
 epistatic_change_PIK3CA$gene <- factor(epistatic_change_PIK3CA$gene,
-                                     levels = c("TP53", "AR", "AKT1", "PIK3CB", "CUL3", "APC", "KMT2D", "ATM",
-                                                "RHOA", "PTEN", "ROCK1", "SPOP", "CTNNB1", "FOXA1", "KMT2C", "BLANK",
-                                                "CUL3_", "ROCK1_", "SPOP_", "RHOA_", "AKT1_", "PIK3CB_",
-                                                "PTEN_", "ATM_", "APC_", "FOXA1_", "KMT2D_", "KMT2C_", "CTNNB1_",
-                                                "TP53_", "AR_"))
+                                     levels = c("SPOP", "AR", "CTNNB1", "KMT2C", "PIK3CB", "AKT1", "CUL3", "APC", "KMT2D", "ATM", "RHOA", "ROCK1", "TP53", "PTEN", "FOXA1", "BLANK", "CUL3_", "ROCK1_", "RHOA_", "AKT1_", "PIK3CB_", "ATM_", "APC_", "TP53_", "FOXA1_", "PTEN_", "KMT2D_", "KMT2C_", "AR_", "SPOP_", "CTNNB1_"
+))
 
 gene_labels_PIK3CA <- c(epistatic_change_PIK3CA_before$gene, "", epistatic_change_PIK3CA_after$gene)
 gene_labels_PIK3CA <- sub("_", "", gene_labels_PIK3CA)
