@@ -138,14 +138,6 @@ epistatic_change_SPOP_after[,1] <- sub("after_SPOP", "", epistatic_change_SPOP_a
 
 
 
-desired_order <- c("TP53", "AR", "PIK3CA", "AKT1", "KMT2C", "CUL3", "PIK3CB", "ATM",
-                   "KMT2D", "FOXA1", "APC", "PTEN", "ROCK1", "RHOA", "CTNNB1", "BLANK",
-                   "CUL3_", "ROCK1_", "CTNNB1_", "PIK3CB_", "PTEN_", "ATM_",
-                   "KMT2D_", "KMT2C_", "TP53_", "FOXA1_", "APC_", "PIK3CA_", "AR_",
-                   "AKT1_", "RHOA_")
-
-
-
 desired_order <- c("AKT1", "KMT2C", "CUL3", "PIK3CB", "ATM",
                    "KMT2D", "APC", "ROCK1", "PTEN", "FOXA1", "TP53", "CTNNB1", "AR", "PIK3CA", "RHOA", 
                    "CUL3_", "ROCK1_", "PIK3CB_", "PIK3CA_", "AR_", "ATM_", "APC_", "TP53_",  "KMT2D_", "CTNNB1_", "KMT2C_", 
