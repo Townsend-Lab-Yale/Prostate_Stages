@@ -77,6 +77,11 @@ cesa <- load_maf(cesa = cesa, maf = MAF7, maf_name = "468", coverage = "targeted
 
 cesa <- load_sample_data(cesa, gleason)
 
+
+consensus_gr = Reduce(GenomicRanges::intersect, unlist(cesa$coverage_ranges[c('exome', 'targeted')]))
+
+
+
 selected_genes <- c("SPOP", "FOXA1", "AR", "PIK3CA", "PIK3CB", "TP53", "ROCK1", "RHOA", "AKT1", "ATM", "CUL3",
                     "APC", "CTNNB1", "PTEN", "KMT2C", "KMT2D")
 
