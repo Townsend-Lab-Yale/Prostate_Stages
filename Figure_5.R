@@ -105,18 +105,18 @@ scientific <- function(x){
 ###SPOP###
 
 #Select your gene pairs of interest
-SPOP_list <- which(epistasiiiiiis$variant_A == "SPOP" | epistasiiiiiis$variant_B == "SPOP")
+SPOP_list <- which(epistasis_results$variant_A == "SPOP" | epistasis_results$variant_B == "SPOP")
 
 epistatic_change_SPOP <- c()
 
 #Decoupling the gene pairs
 for(x in SPOP_list){
-  gene1_after_gene2 <- unlist(c(as.character("gene1_after_gene2"), as.numeric(epistasiiiiiis[x,5] - epistasiiiiiis[x,3])))
-  gene2_after_gene1 <- unlist(c(as.character("gene2_after_gene1"), as.numeric(epistasiiiiiis[x,6] - epistasiiiiiis[x,4])))
-  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene1", as.character(epistasiiiiiis[x,1]))
-  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene2", as.character(epistasiiiiiis[x,2]))
-  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene1", as.character(epistasiiiiiis[x,1]))
-  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene2", as.character(epistasiiiiiis[x,2]))
+  gene1_after_gene2 <- unlist(c(as.character("gene1_after_gene2"), as.numeric(epistasis_results[x,5] - epistasis_results[x,3])))
+  gene2_after_gene1 <- unlist(c(as.character("gene2_after_gene1"), as.numeric(epistasis_results[x,6] - epistasis_results[x,4])))
+  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene1", as.character(epistasis_results[x,1]))
+  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene2", as.character(epistasis_results[x,2]))
+  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene1", as.character(epistasis_results[x,1]))
+  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene2", as.character(epistasis_results[x,2]))
   epistatic_change_SPOP <- rbind(epistatic_change_SPOP, gene1_after_gene2, gene2_after_gene1)
 }
 
@@ -124,10 +124,10 @@ epistatic_change_SPOP <- data.frame(gene = epistatic_change_SPOP[,1], change = a
 
 #Separating "Before" and "After"
 epistatic_change_SPOP_before <- epistatic_change_SPOP[grep("SPOP_", epistatic_change_SPOP[,1]),]
-epistatic_change_SPOP_before$time <- rep("Before", 15)
+epistatic_change_SPOP_before$time <- rep("Before", 14)
 epistatic_change_SPOP_before <- epistatic_change_SPOP_before[order(epistatic_change_SPOP_before$change),]
 epistatic_change_SPOP_after <- epistatic_change_SPOP[grep("_SPOP", epistatic_change_SPOP[,1]),]
-epistatic_change_SPOP_after$time <- rep("After", 15)
+epistatic_change_SPOP_after$time <- rep("After", 14)
 epistatic_change_SPOP_after <- epistatic_change_SPOP_after[order(epistatic_change_SPOP_after$change),]
 
 #Need to have extra underscore to have unique names
@@ -135,86 +135,21 @@ epistatic_change_SPOP_before[,1] <- sub("SPOP_after_", "", epistatic_change_SPOP
 epistatic_change_SPOP_after[,1] <- sub("after_SPOP", "", epistatic_change_SPOP_after[,1])
 
 
-
-
-
-
-
-
-
-
-desired_order <- c("AKT1", "KMT2C", "CUL3", "PIK3CB", "ATM",
-                   "KMT2D", "APC", "ROCK1", "PTEN", "FOXA1", "TP53", "CTNNB1", "AR", "PIK3CA", "RHOA", 
-                   "CUL3_", "ROCK1_", "PIK3CB_", "PIK3CA_", "AR_", "ATM_", "APC_", "TP53_",  "KMT2D_", "CTNNB1_", "KMT2C_", 
-                   "PTEN_",  "FOXA1_", "AKT1_", "RHOA_")
-
-# Set the factor levels for 'gene' in the desired order
-epistatic_change_SPOP$gene <- factor(epistatic_change_SPOP$gene, levels = desired_order)
-
-# Generate gene labels, removing underscores
-gene_labels_SPOP <- sub("_", "", desired_order)
-
-# Create the waterfall plot
-waterfall_SPOP <- ggplot(epistatic_change_SPOP, aes(x = gene, y = change, fill = time)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  theme_classic() +
-  scale_fill_manual(values = c("#F8766D", "#00BFC4")) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1),
-        axis.line.x = element_blank(),
-        legend.position = "bottom",
-        legend.title = element_blank()) +
-  ggtitle("SPOP Gene Pairs") +
-  xlab("Gene") +
-  ylab("Epistatic Change in Selection") +
-  scale_x_discrete(labels = gene_labels_SPOP) +
-  scale_y_continuous(labels = scales::scientific) +
-  geom_hline(yintercept = 0)
-
-# Display the plot
-print(waterfall_SPOP)
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 #Blank spot
 blank <- data.frame(gene = "BLANK", change = -5000, time = "Before")
 
-epistatic_change_SPOP <- rbind(epistatic_change_SPOP_before, blank, epistatic_change_SPOP_after)
+epistatic_change_SPOP <- rbind(epistatic_change_SPOP_before, epistatic_change_SPOP_after)
 
 epistatic_change_SPOP$gene <- factor(epistatic_change_SPOP$gene,
-                                     levels = c("TP53", "AR", "PIK3CA", "AKT1", "KMT2C", "CUL3", "PIK3CB", "ATM",
-                                                "KMT2D", "FOXA1", "APC", "PTEN", "ROCK1", "RHOA", "CTNNB1", "BLANK",
-                                                "CUL3_", "ROCK1_", "CTNNB1_", "PIK3CB_", "PTEN_", "ATM_",
-                                                "KMT2D_", "KMT2C_", "TP53_", "FOXA1_", "APC_", "PIK3CA_", "AR_",
+                                     levels = c("KMT2C", "AKT1", "CUL3", "PIK3CB", "APC", "ATM", "KMT2D", "PTEN",
+                                                "FOXA1", "TP53", "CTNNB1", "AR", "PIK3CA", "RHOA",
+                                                "CUL3_", "PIK3CB_", "PIK3CA_", "AR_", "ATM_",
+                                                "APC_", "TP53_", "KMT2D_", "CTNNB1_", "KMT2C_", "PTEN_", "FOXA1_",
                                                 "AKT1_", "RHOA_"))
-
-
-
-desired_order <- c("AKT1", "KMT2C", "CUL3", "PIK3CB", "ATM",
-                   "KMT2D", "APC", "ROCK1", "PTEN", "FOXA1", "TP53", "CTNNB1", "AR", "PIK3CA", "RHOA", 
-                   "CUL3_", "ROCK1_", "PIK3CB_", "PIK3CA_", "AR_", "ATM_", "APC_", "TP53_",  "KMT2D_", "CTNNB1_", "KMT2C_", 
-                   "PTEN_",  "FOXA1_", "AKT1_", "RHOA_")
-
-
 
 gene_labels_SPOP <- c(epistatic_change_SPOP_before$gene, "", epistatic_change_SPOP_after$gene)
 gene_labels_SPOP <- sub("_", "", gene_labels_SPOP)
+
 
 waterfall_SPOP <- ggplot(epistatic_change_SPOP, aes(x= gene, y=change, fill=time)) +
   geom_bar(stat = "identity", position = "dodge") + theme_classic() +
