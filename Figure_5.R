@@ -224,23 +224,21 @@ waterfall_PIK3CA <- ggplot(epistatic_change_PIK3CA, aes(x= gene, y=change, fill=
 waterfall_PIK3CA
 ggsave("PRAD_figures/epistasis_16/waterfall_PIK3CA.png", width = 10, dpi=300, height = 7)
 
-
-
 ###TP53###
 
 #Select your gene pairs of interest
-TP53_list <- which(epistasiiiiiis$variant_A == "TP53" | epistasiiiiiis$variant_B == "TP53")
+TP53_list <- which(epistasis_results$variant_A == "TP53" | epistasis_results$variant_B == "TP53")
 
 epistatic_change_TP53 <- c()
 
 #Decoupling the gene pairs
 for(x in TP53_list){
-  gene1_after_gene2 <- unlist(c(as.character("gene1_after_gene2"), as.numeric(epistasiiiiiis[x,5] - epistasiiiiiis[x,3])))
-  gene2_after_gene1 <- unlist(c(as.character("gene2_after_gene1"), as.numeric(epistasiiiiiis[x,6] - epistasiiiiiis[x,4])))
-  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene1", as.character(epistasiiiiiis[x,1]))
-  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene2", as.character(epistasiiiiiis[x,2]))
-  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene1", as.character(epistasiiiiiis[x,1]))
-  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene2", as.character(epistasiiiiiis[x,2]))
+  gene1_after_gene2 <- unlist(c(as.character("gene1_after_gene2"), as.numeric(epistasis_results[x,5] - epistasis_results[x,3])))
+  gene2_after_gene1 <- unlist(c(as.character("gene2_after_gene1"), as.numeric(epistasis_results[x,6] - epistasis_results[x,4])))
+  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene1", as.character(epistasis_results[x,1]))
+  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene2", as.character(epistasis_results[x,2]))
+  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene1", as.character(epistasis_results[x,1]))
+  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene2", as.character(epistasis_results[x,2]))
   epistatic_change_TP53 <- rbind(epistatic_change_TP53, gene1_after_gene2, gene2_after_gene1)
 }
 
@@ -248,10 +246,10 @@ epistatic_change_TP53 <- data.frame(gene = epistatic_change_TP53[,1], change = a
 
 #Separating "Before" and "After"
 epistatic_change_TP53_before <- epistatic_change_TP53[grep("TP53_", epistatic_change_TP53[,1]),]
-epistatic_change_TP53_before$time <- rep("Before", 15)
+epistatic_change_TP53_before$time <- rep("Before", 14)
 epistatic_change_TP53_before <- epistatic_change_TP53_before[order(epistatic_change_TP53_before$change),]
 epistatic_change_TP53_after <- epistatic_change_TP53[grep("_TP53", epistatic_change_TP53[,1]),]
-epistatic_change_TP53_after$time <- rep("After", 15)
+epistatic_change_TP53_after$time <- rep("After", 14)
 epistatic_change_TP53_after <- epistatic_change_TP53_after[order(epistatic_change_TP53_after$change),]
 
 #Need to have extra underscore to have unique names
@@ -259,15 +257,13 @@ epistatic_change_TP53_before[,1] <- sub("TP53_after_", "", epistatic_change_TP53
 epistatic_change_TP53_after[,1] <- sub("after_TP53", "", epistatic_change_TP53_after[,1])
 
 #Blank spot
-blank <- data.frame(gene = "BLANK", change = -5000, time = "Before")
-
-epistatic_change_TP53 <- rbind(epistatic_change_TP53_before, blank, epistatic_change_TP53_after)
+epistatic_change_TP53 <- rbind(epistatic_change_TP53_before, epistatic_change_TP53_after)
 
 epistatic_change_TP53$gene <- factor(epistatic_change_TP53$gene,
-                                     levels = c("AKT1", "KMT2D", "RHOA", "AR", "PTEN", "ROCK1", "FOXA1", "SPOP",
-                                                "ATM", "CTNNB1", "PIK3CA", "CUL3", "PIK3CB", "APC", "KMT2C", "BLANK",
-                                                "CUL3_", "ROCK1_", "SPOP_", "RHOA_", "CTNNB1_", "PIK3CA_", "AKT1_",
-                                                "APC_", "FOXA1_", "KMT2D_", "PIK3CB_", "KMT2C_", "ATM_", "AR_", "PTEN_"))
+                                     levels = c("PIK3CA", "AKT1", "PIK3CB", "KMT2D", "ATM", "RHOA", "SPOP", "AR",
+                                                "PTEN", "FOXA1", "CTNNB1", "CUL3", "KMT2C", "APC",
+                                                "CUL3_", "RHOA_", "CTNNB1_", "SPOP_", "APC_", "AR_", "FOXA1_",
+                                                "PTEN_", "KMT2D_", "KMT2C_", "PIK3CA_", "AKT1_", "PIK3CB_", "ATM_"))
 
 
 gene_labels_TP53 <- c(epistatic_change_TP53_before$gene, "", epistatic_change_TP53_after$gene)
