@@ -167,18 +167,18 @@ ggsave("PRAD_figures/epistasis_16/waterfall_SPOP.png", width = 10, dpi=300, heig
 ###PIK3CA###
 
 #Select your gene pairs of interest
-PIK3CA_list <- which(epistasiiiiiis$variant_A == "PIK3CA" | epistasiiiiiis$variant_B == "PIK3CA")
+PIK3CA_list <- which(epistasis_results$variant_A == "PIK3CA" | epistasis_results$variant_B == "PIK3CA")
 
 epistatic_change_PIK3CA <- c()
 
 #Decoupling the gene pairs
 for(x in PIK3CA_list){
-  gene1_after_gene2 <- unlist(c(as.character("gene1_after_gene2"), as.numeric(epistasiiiiiis[x,5] - epistasiiiiiis[x,3])))
-  gene2_after_gene1 <- unlist(c(as.character("gene2_after_gene1"), as.numeric(epistasiiiiiis[x,6] - epistasiiiiiis[x,4])))
-  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene1", as.character(epistasiiiiiis[x,1]))
-  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene2", as.character(epistasiiiiiis[x,2]))
-  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene1", as.character(epistasiiiiiis[x,1]))
-  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene2", as.character(epistasiiiiiis[x,2]))
+  gene1_after_gene2 <- unlist(c(as.character("gene1_after_gene2"), as.numeric(epistasis_results[x,5] - epistasis_results[x,3])))
+  gene2_after_gene1 <- unlist(c(as.character("gene2_after_gene1"), as.numeric(epistasis_results[x,6] - epistasis_results[x,4])))
+  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene1", as.character(epistasis_results[x,1]))
+  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene2", as.character(epistasis_results[x,2]))
+  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene1", as.character(epistasis_results[x,1]))
+  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene2", as.character(epistasis_results[x,2]))
   epistatic_change_PIK3CA <- rbind(epistatic_change_PIK3CA, gene1_after_gene2, gene2_after_gene1)
 }
 
@@ -186,10 +186,10 @@ epistatic_change_PIK3CA <- data.frame(gene = epistatic_change_PIK3CA[,1], change
 
 #Separating "Before" and "After"
 epistatic_change_PIK3CA_before <- epistatic_change_PIK3CA[grep("PIK3CA_", epistatic_change_PIK3CA[,1]),]
-epistatic_change_PIK3CA_before$time <- rep("Before", 15)
+epistatic_change_PIK3CA_before$time <- rep("Before", 14)
 epistatic_change_PIK3CA_before <- epistatic_change_PIK3CA_before[order(epistatic_change_PIK3CA_before$change),]
 epistatic_change_PIK3CA_after <- epistatic_change_PIK3CA[grep("_PIK3CA", epistatic_change_PIK3CA[,1]),]
-epistatic_change_PIK3CA_after$time <- rep("After", 15)
+epistatic_change_PIK3CA_after$time <- rep("After", 14)
 epistatic_change_PIK3CA_after <- epistatic_change_PIK3CA_after[order(epistatic_change_PIK3CA_after$change),]
 
 #Need to have extra underscore to have unique names
@@ -197,15 +197,16 @@ epistatic_change_PIK3CA_before[,1] <- sub("PIK3CA_after_", "", epistatic_change_
 epistatic_change_PIK3CA_after[,1] <- sub("after_PIK3CA", "", epistatic_change_PIK3CA_after[,1])
 
 #Blank spot
-blank <- data.frame(gene = "BLANK", change = 0, time = "Before")
 
-epistatic_change_PIK3CA <- rbind(epistatic_change_PIK3CA_before, blank, epistatic_change_PIK3CA_after)
-
+epistatic_change_PIK3CA <- rbind(epistatic_change_PIK3CA_before, epistatic_change_PIK3CA_after)
 
 
 epistatic_change_PIK3CA$gene <- factor(epistatic_change_PIK3CA$gene,
-                                       levels = c("SPOP", "AR", "CTNNB1", "KMT2C", "PIK3CB", "AKT1", "CUL3", "APC", "KMT2D", "ATM", "RHOA", "ROCK1", "TP53", "PTEN", "FOXA1", "BLANK", "CUL3_", "ROCK1_", "RHOA_", "AKT1_", "PIK3CB_", "ATM_", "APC_", "TP53_", "FOXA1_", "PTEN_", "KMT2D_", "KMT2C_", "AR_", "SPOP_", "CTNNB1_"
-                                       ))
+                                       levels = c("SPOP", "AR", "CTNNB1", "KMT2C", "PIK3CB", "AKT1", "CUL3", "APC",
+                                                  "KMT2D", "ATM", "RHOA", "FOXA1", "TP53", "PTEN",
+                                                  "CUL3_", "RHOA_", "AKT1_", "PIK3CB_", "ATM_",
+                                                  "APC_", "TP53_", "PTEN_", "KMT2D_", "KMT2C_", "AR_", "FOXA1_",
+                                                  "SPOP_", "CTNNB1_"))
 
 gene_labels_PIK3CA <- c(epistatic_change_PIK3CA_before$gene, "", epistatic_change_PIK3CA_after$gene)
 gene_labels_PIK3CA <- sub("_", "", gene_labels_PIK3CA)
@@ -222,6 +223,7 @@ waterfall_PIK3CA <- ggplot(epistatic_change_PIK3CA, aes(x= gene, y=change, fill=
 
 waterfall_PIK3CA
 ggsave("PRAD_figures/epistasis_16/waterfall_PIK3CA.png", width = 10, dpi=300, height = 7)
+
 
 
 ###TP53###
