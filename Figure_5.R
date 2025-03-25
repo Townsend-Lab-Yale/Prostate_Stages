@@ -266,7 +266,7 @@ epistatic_change_TP53$gene <- factor(epistatic_change_TP53$gene,
                                                 "PTEN_", "KMT2D_", "KMT2C_", "PIK3CA_", "AKT1_", "PIK3CB_", "ATM_"))
 
 
-gene_labels_TP53 <- c(epistatic_change_TP53_before$gene, "", epistatic_change_TP53_after$gene)
+gene_labels_TP53 <- c(epistatic_change_TP53_before$gene, epistatic_change_TP53_after$gene)
 gene_labels_TP53 <- sub("_", "", gene_labels_TP53)
 
 waterfall_TP53 <- ggplot(epistatic_change_TP53, aes(x= gene, y=change, fill=time)) +
@@ -276,7 +276,7 @@ waterfall_TP53 <- ggplot(epistatic_change_TP53, aes(x= gene, y=change, fill=time
         legend.position = "bottom", legend.title = element_blank()) +
   ggtitle("TP53 gene pairs") + xlab("Gene") + ylab ("Epistatic change in selection")+
   scale_x_discrete(labels = gene_labels_TP53) + scale_fill_discrete(breaks = c("Before", "After"))+
-  scale_y_continuous(labels = scientific, breaks = c(-2e4,-1.5e4, -1e4, 0, 1e4), limits = c(-2.5e4,1e4)) +
+  scale_y_continuous(labels = scientific, breaks = c(-3e4, -2e4,-1e4, -1e4, 0, 1e4), limits = c(-3.5e4,1e4)) +
   geom_hline(yintercept = 0)
 
 waterfall_TP53
