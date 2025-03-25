@@ -286,18 +286,18 @@ ggsave("PRAD_figures/epistasis_16/waterfall_TP53.png", width = 10, dpi=300, heig
 ###AR###
 
 #Select your gene pairs of interest
-AR_list <- which(epistasiiiiiis$variant_A == "AR" | epistasiiiiiis$variant_B == "AR")
+AR_list <- which(epistasis_results$variant_A == "AR" | epistasis_results$variant_B == "AR")
 
 epistatic_change_AR <- c()
 
 #Decoupling the gene pairs
 for(x in AR_list){
-  gene1_after_gene2 <- unlist(c(as.character("gene1_after_gene2"), as.numeric(epistasiiiiiis[x,5] - epistasiiiiiis[x,3])))
-  gene2_after_gene1 <- unlist(c(as.character("gene2_after_gene1"), as.numeric(epistasiiiiiis[x,6] - epistasiiiiiis[x,4])))
-  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene1", as.character(epistasiiiiiis[x,1]))
-  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene2", as.character(epistasiiiiiis[x,2]))
-  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene1", as.character(epistasiiiiiis[x,1]))
-  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene2", as.character(epistasiiiiiis[x,2]))
+  gene1_after_gene2 <- unlist(c(as.character("gene1_after_gene2"), as.numeric(epistasis_results[x,5] - epistasis_results[x,3])))
+  gene2_after_gene1 <- unlist(c(as.character("gene2_after_gene1"), as.numeric(epistasis_results[x,6] - epistasis_results[x,4])))
+  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene1", as.character(epistasis_results[x,1]))
+  gene1_after_gene2[1] <- str_replace(gene1_after_gene2[1], "gene2", as.character(epistasis_results[x,2]))
+  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene1", as.character(epistasis_results[x,1]))
+  gene2_after_gene1[1] <- str_replace(gene2_after_gene1[1], "gene2", as.character(epistasis_results[x,2]))
   epistatic_change_AR <- rbind(epistatic_change_AR, gene1_after_gene2, gene2_after_gene1)
 }
 
@@ -305,31 +305,30 @@ epistatic_change_AR <- data.frame(gene = epistatic_change_AR[,1], change = as.nu
 
 #Separating "Before" and "After"
 epistatic_change_AR_before <- epistatic_change_AR[grep("AR_", epistatic_change_AR[,1]),]
-epistatic_change_AR_before$time <- rep("Before", 15)
-epistatic_change_AR_before <- epistatic_change_AR_before[order(-epistatic_change_AR_before$change),]
+epistatic_change_AR_before$time <- rep("Before", 14)
+epistatic_change_AR_before <- epistatic_change_AR_before[order(epistatic_change_AR_before$change),]
 epistatic_change_AR_after <- epistatic_change_AR[grep("_AR", epistatic_change_AR[,1]),]
-epistatic_change_AR_after$time <- rep("After", 15)
-epistatic_change_AR_after <- epistatic_change_AR_after[order(-epistatic_change_AR_after$change),]
+epistatic_change_AR_after$time <- rep("After", 14)
+epistatic_change_AR_after <- epistatic_change_AR_after[order(epistatic_change_AR_after$change),]
 
 #Need to have extra underscore to have unique names
 epistatic_change_AR_before[,1] <- sub("AR_after_", "", epistatic_change_AR_before[,1])
 epistatic_change_AR_after[,1] <- sub("after_AR", "", epistatic_change_AR_after[,1])
 
 #Blank spot
-blank <- data.frame(gene = "BLANK", change = 0, time = "Before")
+epistatic_change_AR <- rbind(epistatic_change_AR_before, epistatic_change_AR_after)
 
-epistatic_change_AR <- rbind(epistatic_change_AR_before, blank, epistatic_change_AR_after)
 
 epistatic_change_AR$gene <- factor(epistatic_change_AR$gene,
-                                   levels = c("PTEN", "ROCK1", "AKT1", "KMT2C", "CUL3", "PIK3CB", "APC", "RHOA", "TP53",
-                                              "FOXA1", "CTNNB1", "PIK3CA", "SPOP", "ATM", "KMT2D", "BLANK", "CUL3_",
-                                              "ROCK1_", "SPOP_", "RHOA_", "AKT1_", "PIK3CB_", "PIK3CA_", "APC_",
-                                              "TP53_", "FOXA1_", "CTNNB1_", "KMT2D_", "KMT2C_", "PTEN_", "ATM_"))
+                                     levels = c("SPOP", "CTNNB1", "KMT2C", "AKT1", "PIK3CB", "CUL3", "APC", "RHOA",
+                                                "ATM", "TP53", "FOXA1", "PIK3CA", "PTEN", "KMT2D",
+                                                "CUL3_", "RHOA_", "AKT1_", "PIK3CB_", "PIK3CA_", "APC_", "FOXA1_",
+                                                "PTEN_", "KMT2D_", "TP53_", "KMT2C_", "CTNNB1_", "SPOP_", "ATM_"))
 
-gene_labels_AR <- sub("_", "", c("PTEN", "ROCK1", "AKT1", "KMT2C", "CUL3", "PIK3CB", "APC", "RHOA", "TP53",
-                                 "FOXA1", "CTNNB1", "PIK3CA", "SPOP", "ATM", "KMT2D", "BLANK", "CUL3_",
-                                 "ROCK1_", "SPOP_", "RHOA_", "AKT1_", "PIK3CB_", "PIK3CA_", "APC_",
-                                 "TP53_", "FOXA1_", "CTNNB1_", "KMT2D_", "KMT2C_", "PTEN_", "ATM_"))
+
+gene_labels_AR <- c(epistatic_change_AR_before$gene, epistatic_change_AR_after$gene)
+gene_labels_AR <- sub("_", "", gene_labels_AR)
+
 
 waterfall_AR <- ggplot(epistatic_change_AR, aes(x= gene, y=change, fill=time)) +
   geom_bar(stat = "identity", position = "dodge") + theme_classic() +
@@ -339,7 +338,7 @@ waterfall_AR <- ggplot(epistatic_change_AR, aes(x= gene, y=change, fill=time)) +
   ggtitle("AR gene pairs") + xlab("Gene") + ylab ("Epistatic change in selection")+
   scale_x_discrete(labels = gene_labels_AR) +
   scale_fill_discrete(breaks = c("Before", "After"))+
-  scale_y_continuous(labels = scientific, limits = c(-3e4, 3e4), breaks = c(-2e4, -1.5e4, 0, 2e4, 2.8e4)) +
+  scale_y_continuous(labels = scientific, limits = c(-5e4, 8e4), breaks = c(-4e4, -2e4, 0, 2e4, 4e4, 8e4)) +
   geom_hline(yintercept = 0)
 
 waterfall_AR
