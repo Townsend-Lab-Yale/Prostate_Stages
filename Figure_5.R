@@ -136,7 +136,6 @@ epistatic_change_SPOP_after[,1] <- sub("after_SPOP", "", epistatic_change_SPOP_a
 
 
 #Blank spot
-blank <- data.frame(gene = "BLANK", change = -5000, time = "Before")
 
 epistatic_change_SPOP <- rbind(epistatic_change_SPOP_before, epistatic_change_SPOP_after)
 
@@ -147,7 +146,7 @@ epistatic_change_SPOP$gene <- factor(epistatic_change_SPOP$gene,
                                                 "APC_", "TP53_", "KMT2D_", "CTNNB1_", "KMT2C_", "PTEN_", "FOXA1_",
                                                 "AKT1_", "RHOA_"))
 
-gene_labels_SPOP <- c(epistatic_change_SPOP_before$gene, "", epistatic_change_SPOP_after$gene)
+gene_labels_SPOP <- c(epistatic_change_SPOP_before$gene, epistatic_change_SPOP_after$gene)
 gene_labels_SPOP <- sub("_", "", gene_labels_SPOP)
 
 
@@ -163,6 +162,7 @@ waterfall_SPOP <- ggplot(epistatic_change_SPOP, aes(x= gene, y=change, fill=time
 
 waterfall_SPOP
 ggsave("PRAD_figures/epistasis_16/waterfall_SPOP.png", width = 10, dpi=300, height = 7)
+
 
 ###PIK3CA###
 
