@@ -89,9 +89,9 @@ cesa <- trinuc_mutation_rates(cesa = cesa, signature_set = "COSMIC_v3.2", signat
 # calculate gene rates for all samples
 cesa <- gene_mutation_rates(cesa, covariates = "PRAD", save_all_dndscv_output = T)
 
-cesa <- ces_gene_epistasis(cesa = cesa, genes = selected_genes, variants = "recurrent", run_name = "gene_epistasis_example")
+cesa <- ces_gene_epistasis(cesa = cesa, genes = selected_genes, variants = "recurrent", run_name = "gene_epistasis_PRAD")
 
-epistasiiiiiis <- cesa$epistasis$gene_epistasis_example
+epistasis_results <- cesa$epistasis$gene_epistasis_PRAD
 
 scientific <- function(x){
   ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", label_scientific()(x)))))
