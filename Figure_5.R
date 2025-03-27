@@ -347,12 +347,64 @@ ggsave("PRAD_figures/epistasis_16/waterfall_AR.png", width = 10, dpi=300, height
 
 ###############################################
 
+
 combined_waterfall <- plot_grid(waterfall_SPOP, waterfall_PIK3CA, waterfall_TP53, waterfall_AR,
                                 labels = c("A", "B", "C", "D"), ncol = 2)
 
-combined_waterfall
 
-ggsave("PRAD_figures/epistasis_16/combined_waterfall.png", width = 10, dpi=300, height = 7.5)
+png("combined_waterfall_with_legends.png", width = 3000, height = 2000, res = 300)
+
+grid.newpage()
+print(combined_waterfall, vp = viewport())
+
+# SPOP
+grid.rect(x = unit(0.125, "npc"), y = unit(0.88, "npc"), width = unit(0.018, "npc"), height = unit(0.028, "npc"), gp = gpar(fill = "#F8766D", col = NA))
+grid.text("Change in selection for", x = unit(0.14, "npc"), y = unit(0.90, "npc"), just = "left", gp = gpar(fontsize = 8))
+grid.text(expression("mutated "*italic("SPOP")*" after"), x = unit(0.14, "npc"), y = unit(0.88, "npc"), just = "left", gp = gpar(fontsize = 8))
+grid.text("the gene below is mutated", x = unit(0.14, "npc"), y = unit(0.86, "npc"), just = "left", gp = gpar(fontsize = 8))
+
+grid.rect(x = unit(0.325, "npc"), y = unit(0.88, "npc"), width = unit(0.018, "npc"), height = unit(0.028, "npc"), gp = gpar(fill = "#00BFC4", col = NA))
+grid.text("Change in selection for", x = unit(0.34, "npc"), y = unit(0.90, "npc"), just = "left", gp = gpar(fontsize = 8))
+grid.text(expression("mutated gene below after"), x = unit(0.34, "npc"), y = unit(0.88, "npc"), just = "left", gp = gpar(fontsize = 8))
+grid.text(expression(italic("SPOP")*" is mutated"), x = unit(0.34, "npc"), y = unit(0.86, "npc"), just = "left", gp = gpar(fontsize = 8))
+
+# TP53
+grid.rect(x = unit(0.125, "npc"), y = unit(0.24, "npc"), width = unit(0.018, "npc"), height = unit(0.028, "npc"), gp = gpar(fill = "#F8766D", col = NA))
+grid.text("Change in selection for", x = unit(0.14, "npc"), y = unit(0.26, "npc"), just = "left", gp = gpar(fontsize = 8))
+grid.text(expression("mutated "*italic("TP53")*" after"), x = unit(0.14, "npc"), y = unit(0.24, "npc"), just = "left", gp = gpar(fontsize = 8))
+grid.text("the gene below is mutated", x = unit(0.14, "npc"), y = unit(0.22, "npc"), just = "left", gp = gpar(fontsize = 8))
+
+grid.rect(x = unit(0.325, "npc"), y = unit(0.24, "npc"), width = unit(0.018, "npc"), height = unit(0.028, "npc"), gp = gpar(fill = "#00BFC4", col = NA))
+grid.text("Change in selection for", x = unit(0.34, "npc"), y = unit(0.26, "npc"), just = "left", gp = gpar(fontsize = 8))
+grid.text(expression("mutated gene below after"), x = unit(0.34, "npc"), y = unit(0.24, "npc"), just = "left", gp = gpar(fontsize = 8))
+grid.text(expression(italic("TP53")*" is mutated"), x = unit(0.34, "npc"), y = unit(0.22, "npc"), just = "left", gp = gpar(fontsize = 8))
+
+
+# PIK3CA
+grid.rect(x = unit(0.625, "npc"), y = unit(0.88, "npc"), width = unit(0.018, "npc"), height = unit(0.028, "npc"), gp = gpar(fill = "#F8766D", col = NA))
+grid.text("Change in selection for", x = unit(0.64, "npc"), y = unit(0.90, "npc"), just = "left", gp = gpar(fontsize = 8))
+grid.text(expression("mutated "*italic("PIK3CA")*" after"), x = unit(0.64, "npc"), y = unit(0.88, "npc"), just = "left", gp = gpar(fontsize = 8))
+grid.text("the gene below is mutated", x = unit(0.64, "npc"), y = unit(0.86, "npc"), just = "left", gp = gpar(fontsize = 8))
+
+grid.rect(x = unit(0.825, "npc"), y = unit(0.88, "npc"), width = unit(0.018, "npc"), height = unit(0.028, "npc"), gp = gpar(fill = "#00BFC4", col = NA))
+grid.text("Change in selection for", x = unit(0.84, "npc"), y = unit(0.90, "npc"), just = "left", gp = gpar(fontsize = 8))
+grid.text(expression("mutated gene below after"), x = unit(0.84, "npc"), y = unit(0.88, "npc"), just = "left", gp = gpar(fontsize = 8))
+grid.text(expression(italic("PIK3CA")*" is mutated"), x = unit(0.84, "npc"), y = unit(0.86, "npc"), just = "left", gp = gpar(fontsize = 8))
+
+
+# AR
+grid.rect(x = unit(0.625, "npc"), y = unit(0.36, "npc"), width = unit(0.02, "npc"), height = unit(0.03, "npc"), gp = gpar(fill = "#F8766D", col = NA))
+grid.text("Change in selection for", x = unit(0.64, "npc"), y = unit(0.38, "npc"), just = "left", gp = gpar(fontsize = 8))
+grid.text(expression("mutated "*italic("AR")*" after"), x = unit(0.64, "npc"), y = unit(0.36, "npc"), just = "left", gp = gpar(fontsize = 8))
+grid.text("the gene below is mutated", x = unit(0.64, "npc"), y = unit(0.34, "npc"), just = "left", gp = gpar(fontsize = 8))
+
+grid.rect(x = unit(0.825, "npc"), y = unit(0.36, "npc"), width = unit(0.02, "npc"), height = unit(0.03, "npc"), gp = gpar(fill = "#00BFC4", col = NA))
+grid.text("Change in selection for", x = unit(0.84, "npc"), y = unit(0.38, "npc"), just = "left", gp = gpar(fontsize = 8))
+grid.text(expression("mutated gene below after"), x = unit(0.84, "npc"), y = unit(0.36, "npc"), just = "left", gp = gpar(fontsize = 8))
+grid.text(expression(italic("AR")*" is mutated"), x = unit(0.84, "npc"), y = unit(0.34, "npc"), just = "left", gp = gpar(fontsize = 8))
+
+
+dev.off()
 
 
 
