@@ -342,7 +342,6 @@ ggsave("PRAD_figures/epistasis_16/waterfall_AR.png", width = 10, dpi=300, height
 
 ###############################################
 
-
 combined_waterfall <- plot_grid(waterfall_SPOP, waterfall_PIK3CA, waterfall_TP53, waterfall_AR,
                                 labels = c("A", "B", "C", "D"), ncol = 2)
 
@@ -374,7 +373,6 @@ grid.text("Change in selection for", x = unit(0.34, "npc"), y = unit(0.26, "npc"
 grid.text(expression("mutated gene below after"), x = unit(0.34, "npc"), y = unit(0.24, "npc"), just = "left", gp = gpar(fontsize = 8))
 grid.text(expression(italic("TP53")*" is mutated"), x = unit(0.34, "npc"), y = unit(0.22, "npc"), just = "left", gp = gpar(fontsize = 8))
 
-
 # PIK3CA
 grid.rect(x = unit(0.625, "npc"), y = unit(0.88, "npc"), width = unit(0.018, "npc"), height = unit(0.028, "npc"), gp = gpar(fill = "#F8766D", col = NA))
 grid.text("Change in selection for", x = unit(0.64, "npc"), y = unit(0.90, "npc"), just = "left", gp = gpar(fontsize = 8))
@@ -385,7 +383,6 @@ grid.rect(x = unit(0.825, "npc"), y = unit(0.88, "npc"), width = unit(0.018, "np
 grid.text("Change in selection for", x = unit(0.84, "npc"), y = unit(0.90, "npc"), just = "left", gp = gpar(fontsize = 8))
 grid.text(expression("mutated gene below after"), x = unit(0.84, "npc"), y = unit(0.88, "npc"), just = "left", gp = gpar(fontsize = 8))
 grid.text(expression(italic("PIK3CA")*" is mutated"), x = unit(0.84, "npc"), y = unit(0.86, "npc"), just = "left", gp = gpar(fontsize = 8))
-
 
 # AR
 grid.rect(x = unit(0.625, "npc"), y = unit(0.36, "npc"), width = unit(0.02, "npc"), height = unit(0.03, "npc"), gp = gpar(fill = "#F8766D", col = NA))
@@ -398,41 +395,7 @@ grid.text("Change in selection for", x = unit(0.84, "npc"), y = unit(0.38, "npc"
 grid.text(expression("mutated gene below after"), x = unit(0.84, "npc"), y = unit(0.36, "npc"), just = "left", gp = gpar(fontsize = 8))
 grid.text(expression(italic("AR")*" is mutated"), x = unit(0.84, "npc"), y = unit(0.34, "npc"), just = "left", gp = gpar(fontsize = 8))
 
-
 dev.off()
 
 
 #End
-
-
-
-
-
-
-# Clear gene rates and calculate gene rates for all samples (not separated by normal and tumor) for epistasis ----
-cesa <- clear_gene_rates(cesa)
-cesa <- gene_mutation_rates(cesa, covariates = "ESCA", save_all_dndscv_output = T)
-
-dndscv_gene_names <- cesa$gene_rates$gene
-nsyn_sites <- sapply(RefCDS[dndscv_gene_names], function(x) colSums(x[["L"]])[1])
-
-samples_in_all <- length(unique(cesa$dNdScv_results$rate_grp_1$annotmuts$sampleID ))
-
-mut_rate_df <- tibble(gene = cesa$dNdScv_results$rate_grp_1$genemuts$gene_name,
-                      exp_mu = cesa$dNdScv_results$rate_grp_1$genemuts$exp_syn_cv)
-
-mut_rate_df$n_syn_sites = nsyn_sites[mut_rate_df$gene]
-
-mut_rate_df <- mut_rate_df %>% 
-  mutate(total_mu = (exp_mu / n_syn_sites) / samples_in_all) %>%
-  select(gene, total_mu) %>%
-  data.table::setDT()
-
-cesa <- clear_gene_rates(cesa = cesa)
-cesa <- set_gene_rates(cesa = cesa, rates = mut_rate_df, missing_genes_take_nearest = T) 
-
-
-cesa <- ces_epistasis(cesa, variants = compound, run_name = "epistasis_compound_variants_all_samples")
-
-
-save_cesa(cesa = cesa, file = "analysis/eso_cesa_after_analysis.rds")
