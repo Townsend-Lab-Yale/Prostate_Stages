@@ -205,16 +205,18 @@ epistatic_change_PIK3CA$gene <- factor(epistatic_change_PIK3CA$gene,
 gene_labels_PIK3CA <- c(epistatic_change_PIK3CA_before$gene, "", epistatic_change_PIK3CA_after$gene)
 gene_labels_PIK3CA <- sub("_", "", gene_labels_PIK3CA)
 
-waterfall_PIK3CA <- ggplot(epistatic_change_PIK3CA, aes(x= gene, y=change, fill=time)) +
-  geom_bar(stat = "identity", position = "dodge") + theme_classic() +
-  scale_fill_manual(values = c("#F8766D","#00BFC4"))+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), axis.line.x = element_blank(),
-        legend.position = "bottom", legend.title = element_blank()) +
-  ggtitle("PIK3CA gene pairs") + xlab("Gene") + ylab ("Epistatic change in selection")+
-  scale_x_discrete(labels = gene_labels_PIK3CA) + scale_fill_discrete(breaks = c("Before", "After"))+
-  scale_y_continuous(labels = scientific) +
+
+
+waterfall_PIK3CA <- ggplot(epistatic_change_PIK3CA, aes(x = gene, y = change, fill = time)) +
+  geom_bar(stat = "identity", position = "dodge", show.legend = FALSE) +  theme_classic() +
+  scale_fill_manual(values = c("Before" = "#F8766D", "After" = "#00BFC4")) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), axis.line.x = element_blank()) +
+  xlab("Gene") + ylab("Epistatic change in selection") +
+  scale_x_discrete(labels = gene_labels_PIK3CA) +
+  scale_y_continuous(labels = scientific, limits = c(-4e4, 5e4), breaks = c(-4e4, -2e4, 0, 2e4, 4e4, 5e4)) +
   geom_hline(yintercept = 0)
 
+  
 waterfall_PIK3CA
 ggsave("PRAD_figures/epistasis_16/waterfall_PIK3CA.png", width = 10, dpi=300, height = 7)
 
