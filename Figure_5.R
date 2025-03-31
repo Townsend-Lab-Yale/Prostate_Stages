@@ -326,15 +326,14 @@ gene_labels_AR <- c(epistatic_change_AR_before$gene, epistatic_change_AR_after$g
 gene_labels_AR <- sub("_", "", gene_labels_AR)
 
 
-waterfall_AR <- ggplot(epistatic_change_AR, aes(x= gene, y=change, fill=time)) +
-  geom_bar(stat = "identity", position = "dodge") + theme_classic() +
-  scale_fill_manual(values = c("#F8766D","#00BFC4"))+
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), axis.line.x = element_blank(),
-        legend.position = "bottom", legend.title = element_blank()) +
-  ggtitle("AR gene pairs") + xlab("Gene") + ylab ("Epistatic change in selection")+
+waterfall_AR <- ggplot(epistatic_change_AR, aes(x = gene, y = change, fill = time)) +
+  geom_bar(stat = "identity", position = "dodge", show.legend = FALSE) + theme_classic() +
+  scale_fill_manual(values = c("Before" = "#F8766D", "After" = "#00BFC4")) +
+  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), axis.line.x = element_blank()) +
+  xlab("Gene") + ylab("Epistatic change in selection") +
   scale_x_discrete(labels = gene_labels_AR) +
-  scale_fill_discrete(breaks = c("Before", "After"))+
-  scale_y_continuous(labels = scientific, limits = c(-5e4, 8e4), breaks = c(-4e4, -2e4, 0, 2e4, 4e4, 8e4)) +
+  scale_y_continuous(labels = scientific, limits = c(-5e4, 8e4), 
+                     breaks = c(-4e4, -2e4, 0, 2e4, 4e4, 8e4)) +
   geom_hline(yintercept = 0)
 
 waterfall_AR
