@@ -148,7 +148,7 @@ gene_labels_SPOP <- sub("_", "", gene_labels_SPOP)
 waterfall_SPOP <- ggplot(epistatic_change_SPOP, aes(x = gene, y = change, fill = time)) +
   geom_bar(stat = "identity", position = "dodge", show.legend = FALSE) +  theme_classic() +
   scale_fill_manual(values = c("Before" = "#F8766D", "After" = "#00BFC4")) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), axis.line.x = element_blank()) +
+  theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1), axis.text.y = element_text(size = 8), axis.line.x = element_blank(), axis.title.y = element_text(size = 12)) +
   xlab("Gene") + ylab("Epistatic change in selection") +
   scale_x_discrete(labels = gene_labels_SPOP) +
   scale_y_continuous(labels = scientific, limits = c(-4e4, 8e4), breaks = c(-4e4, -2e4, 0, 2e4, 4e4, 8e4)) +
@@ -210,7 +210,7 @@ gene_labels_PIK3CA <- sub("_", "", gene_labels_PIK3CA)
 waterfall_PIK3CA <- ggplot(epistatic_change_PIK3CA, aes(x = gene, y = change, fill = time)) +
   geom_bar(stat = "identity", position = "dodge", show.legend = FALSE) +  theme_classic() +
   scale_fill_manual(values = c("Before" = "#F8766D", "After" = "#00BFC4")) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), axis.line.x = element_blank()) +
+  theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1), axis.text.y = element_text(size = 8), axis.line.x = element_blank(), axis.title.y = element_text(size = 12)) +
   xlab("Gene") + ylab("Epistatic change in selection") +
   scale_x_discrete(labels = gene_labels_PIK3CA) +
   scale_y_continuous(labels = scientific, limits = c(-4e4, 5e4), breaks = c(-4e4, -2e4, 0, 2e4, 4e4, 5e4)) +
@@ -269,7 +269,7 @@ gene_labels_TP53 <- sub("_", "", gene_labels_TP53)
 waterfall_TP53 <- ggplot(epistatic_change_TP53, aes(x = gene, y = change, fill = time)) +
   geom_bar(stat = "identity", position = "dodge", show.legend = FALSE) +  theme_classic() +
   scale_fill_manual(values = c("Before" = "#F8766D", "After" = "#00BFC4")) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), axis.line.x = element_blank()) +
+  theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1), axis.text.y = element_text(size = 8), axis.line.x = element_blank(), axis.title.y = element_text(size = 12)) +
   xlab("Gene") + ylab("Epistatic change in selection") +
   scale_x_discrete(labels = gene_labels_TP53) +
   scale_y_continuous(labels = scientific, limits = c(-3.5e4,1e4), breaks = c(-3e4, -2e4,-1e4, -1e4, 0, 1e4)) +
@@ -329,7 +329,7 @@ gene_labels_AR <- sub("_", "", gene_labels_AR)
 waterfall_AR <- ggplot(epistatic_change_AR, aes(x = gene, y = change, fill = time)) +
   geom_bar(stat = "identity", position = "dodge", show.legend = FALSE) + theme_classic() +
   scale_fill_manual(values = c("Before" = "#F8766D", "After" = "#00BFC4")) +
-  theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust = 1), axis.line.x = element_blank()) +
+  theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1), axis.text.y = element_text(size = 8), axis.line.x = element_blank(), axis.title.y = element_text(size = 12)) +
   xlab("Gene") + ylab("Epistatic change in selection") +
   scale_x_discrete(labels = gene_labels_AR) +
   scale_y_continuous(labels = scientific, limits = c(-5e4, 8e4), 
