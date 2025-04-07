@@ -103,7 +103,7 @@ top_SPOP <- variants[gene == "SPOP" & (maf_prevalence > 1 | (aa_ref != "STOP" & 
 top_ATM <- variants[gene == "ATM" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
 top_CUL3 <- variants[gene == "CUL3" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
 top_APC <- variants[gene == "APC" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
-top_MUC16 <- variants[gene == "MUC16" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
+top_PTEN <- variants[gene == "PTEN" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
 top_KMT2C <- variants[gene == "KMT2C" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
 top_KMT2D <- variants[gene == "KMT2D" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
 
@@ -121,7 +121,7 @@ for_comp <- rbind(top_TP53,
                   top_ATM, 
                   top_CUL3, 
                   top_APC, 
-                  top_MUC16, 
+                  top_PTEN, 
                   top_KMT2C, 
                   top_KMT2D, 
                   top_PIK3CA,
