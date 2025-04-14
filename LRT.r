@@ -252,16 +252,16 @@ for (comp_ind in 1:length(compound)) {
 
 # selecting necessary data
 
-selection_data_Si_Late_Meta_rate_Late <- rbindlist(cesa_samples_by_groups$selection)
+selection_Late&Meta_rate_Late <- rbindlist(cesa_samples_by_groups$selection)
 
 # reformatting data set
-selection_data_Si_Late_Meta_rate_Late <- selection_data_Si_Late_Meta_rate_Late |>
+selection_Late&Meta_rate_Late <- selection_Late&Meta_rate_Late |>
   select(variant_name, starts_with("selection"), starts_with("log"), starts_with("ci")) |>
   mutate(variant_name = stringr::str_remove(variant_name, "\\.1")) |>
   mutate(across(-variant_name, ~replace_na(., 0)))
 
 
-data.table::fwrite(selection_data_Si_Late_Meta_rate_Late, file = "selection_Late&Meta_rate_Late.txt", sep = "\t")
+data.table::fwrite(selection_Late&Meta_rate_Late, file = "selection_Late&Meta_rate_Late.txt", sep = "\t")
 
 
 ### selection intensity of Early & Metastasis using mutation rate of Early:
