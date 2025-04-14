@@ -6,7 +6,6 @@ library(RColorBrewer)
 library(ggrepel)
 library(readr)
 
-
 setwd("C:/Moein/projects/prostate_stages/PRAD_files")
 
 ###Preparing data
@@ -72,7 +71,6 @@ cesa <- load_maf(cesa = cesa, maf = MAF7, maf_name = "468", coverage = "targeted
 
 cesa <- load_sample_data(cesa, gleason)
 
-
 #defining groups:
 Early_groups <- cesa$samples[Gleason == "Early" & coverage == "exome", unique(Unique_Patient_Identifier)]
 Late_groups <- cesa$samples[Gleason == "Late" & coverage == "exome", unique(Unique_Patient_Identifier)]
@@ -85,10 +83,8 @@ cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa, covariates = "PRAD", 
 cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, covariates = "PRAD", samples = Late_groups, save_all_dndscv_output = T)
 cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, covariates = "PRAD", samples = Metastasis_groups, save_all_dndscv_output = T)
 
-
 selected_genes <- c("SPOP", "FOXA1", "AR", "PIK3CA", "PIK3CB", "TP53", "ROCK1", "RHOA", "AKT1", "ATM", "CUL3",
                     "APC", "CTNNB1", "PTEN", "KMT2C", "KMT2D")
-
 
 ### selection intensity of Late & Metastasis using mutation rate of Metastasis:
 
@@ -100,7 +96,6 @@ mut_rate_df_Meta <- tibble(gene = cesa_samples_by_groups$gene_rates$gene,
 set_cancer_rates_Meta <- mut_rate_df_Meta %>%
   select(gene, Metastasis_gene_Rates) %>%
   data.table::setDT()
-
 
 ### creating a data frame with mutation rate data for Late_groups
 mut_rate_df_Late <- tibble(gene = cesa_samples_by_groups$gene_rates$gene,
@@ -117,7 +112,6 @@ mut_rate_df_Early <- tibble(gene = cesa_samples_by_groups$gene_rates$gene,
 set_cancer_rates_Early <- mut_rate_df_Early %>%
   select(gene, Early_gene_Rates) %>%
   data.table::setDT()
-
 
 # clear the gene rates in the cesa object 
 cesa_samples_by_groups <- clear_gene_rates(cesa = cesa_samples_by_groups)
@@ -138,8 +132,6 @@ compound <- define_compound_variants(cesa = cesa_samples_by_groups,
                                        filter(intergenic == F, gene %in% selected_genes),
                                      by = "gene", merge_distance = Inf)
 
-
-
 for (comp_ind in 1:length(compound)) {
   
   this_comp <- compound[comp_ind, ]
@@ -153,7 +145,6 @@ for (comp_ind in 1:length(compound)) {
   )
 }
 
-
 scientific <- function(x){ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", label_scientific()(x)))))}
 
 # selecting necessary data
@@ -166,15 +157,12 @@ selection_Late&Meta_rate_Meta <- selection_Late&Meta_rate_Meta |>
   mutate(variant_name = stringr::str_remove(variant_name, "\\.1")) |>
   mutate(across(-variant_name, ~replace_na(., 0)))
 
-
 data.table::fwrite(selection_Late&Meta_rate_Meta, file = "selection_Late&Meta_rate_Meta.txt", sep = "\t")
-
 
 ### selection intensity of Early & Metastasis using mutation rate of Metastasis:
 
 #Clear variant effect output
 cesa_samples_by_groups <- clear_effect_output(cesa_samples_by_groups)
-
 
 for (comp_ind in 1:length(compound)) {
   
@@ -189,9 +177,6 @@ for (comp_ind in 1:length(compound)) {
   )
 }
 
-
-scientific <- function(x){ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", label_scientific()(x)))))}
-
 # selecting necessary data
 
 selection_Early&Meta_rate_Meta <- rbindlist(cesa_samples_by_groups$selection)
@@ -202,9 +187,7 @@ selection_Early&Meta_rate_Meta <- selection_Early&Meta_rate_Meta |>
   mutate(variant_name = stringr::str_remove(variant_name, "\\.1")) |>
   mutate(across(-variant_name, ~replace_na(., 0)))
 
-
 data.table::fwrite(selection_Early&Meta_rate_Meta, file = "selection_Early&Meta_rate_Meta.txt", sep = "\t")
-
 
 ### selection intensity of Late & Metastasis using mutation rate of Late:
 
@@ -226,14 +209,11 @@ signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD"
 # estimating trinucleotide mutation rates
 cesa_samples_by_groups <- trinuc_mutation_rates(cesa = cesa_samples_by_groups, signature_set = "COSMIC_v3.2", signature_exclusions = signature_exclusions)
 
-
 # defining compound variants
 compound <- define_compound_variants(cesa = cesa_samples_by_groups, 
                                      variant_table = cesa_samples_by_groups$variants |>
                                        filter(intergenic == F, gene %in% selected_genes),
                                      by = "gene", merge_distance = Inf)
-
-
 
 for (comp_ind in 1:length(compound)) {
   
@@ -248,8 +228,6 @@ for (comp_ind in 1:length(compound)) {
   )
 }
 
-
-
 # selecting necessary data
 
 selection_Late&Meta_rate_Late <- rbindlist(cesa_samples_by_groups$selection)
@@ -260,9 +238,7 @@ selection_Late&Meta_rate_Late <- selection_Late&Meta_rate_Late |>
   mutate(variant_name = stringr::str_remove(variant_name, "\\.1")) |>
   mutate(across(-variant_name, ~replace_na(., 0)))
 
-
 data.table::fwrite(selection_Late&Meta_rate_Late, file = "selection_Late&Meta_rate_Late.txt", sep = "\t")
-
 
 ### selection intensity of Early & Metastasis using mutation rate of Early:
 
@@ -284,14 +260,11 @@ signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD"
 # estimating trinucleotide mutation rates
 cesa_samples_by_groups <- trinuc_mutation_rates(cesa = cesa_samples_by_groups, signature_set = "COSMIC_v3.2", signature_exclusions = signature_exclusions)
 
-
 # defining compound variants
 compound <- define_compound_variants(cesa = cesa_samples_by_groups, 
                                      variant_table = cesa_samples_by_groups$variants |>
                                        filter(intergenic == F, gene %in% selected_genes),
                                      by = "gene", merge_distance = Inf)
-
-
 
 for (comp_ind in 1:length(compound)) {
   
@@ -306,7 +279,6 @@ for (comp_ind in 1:length(compound)) {
   )
 }
 
-
 # selecting necessary data
 
 selection_Early&Meta_rate_Early <- rbindlist(cesa_samples_by_groups$selection)
@@ -316,7 +288,6 @@ selection_Early&Meta_rate_Early <- selection_Early&Meta_rate_Early |>
   select(variant_name, starts_with("selection"), starts_with("log"), starts_with("ci")) |>
   mutate(variant_name = stringr::str_remove(variant_name, "\\.1")) |>
   mutate(across(-variant_name, ~replace_na(., 0)))
-
 
 data.table::fwrite(selection_Early&Meta_rate_Early, file = "selection_Early&Meta_rate_Early.txt", sep = "\t")
 
