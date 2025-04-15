@@ -291,5 +291,61 @@ selection_Early&Meta_rate_Early <- selection_Early&Meta_rate_Early |>
 
 data.table::fwrite(selection_Early&Meta_rate_Early, file = "selection_Early&Meta_rate_Early.txt", sep = "\t")
 
+### selection intensity of Early & Late using mutation rate of Early:
+
+#Clear variant effect output
+cesa_samples_by_groups <- clear_effect_output(cesa_samples_by_groups)
+
+# clear the gene rates in the cesa object 
+cesa_samples_by_groups <- clear_gene_rates(cesa = cesa_samples_by_groups)
+
+# trinucleotide mutation rates 
+cesa_samples_by_groups <- clear_trinuc_rates_and_signatures(cesa_samples_by_groups)
+
+# setting gene rates to Late_rate
+cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = set_cancer_rates_Early, missing_genes_take_nearest = T) 
+
+# infer trinculeotide-context-specific relative rates of SNV mutation from a mutational signature analysis
+signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
+
+# estimating trinucleotide mutation rates
+cesa_samples_by_groups <- trinuc_mutation_rates(cesa = cesa_samples_by_groups, signature_set = "COSMIC_v3.2", signature_exclusions = signature_exclusions)
+
+
+# defining compound variants
+compound <- define_compound_variants(cesa = cesa_samples_by_groups, 
+                                     variant_table = cesa_samples_by_groups$variants |>
+                                       filter(intergenic == F, gene %in% selected_genes),
+                                     by = "gene", merge_distance = Inf)
+
+
+
+for (comp_ind in 1:length(compound)) {
+  
+  this_comp <- compound[comp_ind, ]
+  
+  this_gene <- unlist(unique(this_comp$snv_info$genes))
+  
+  cesa_samples_by_groups <- ces_variant(
+    cesa = cesa_samples_by_groups,
+    variants = this_comp, samples = Early_Late_groups,
+    run_name = this_gene
+  )
+}
+
+
+# selecting necessary data
+
+selection_EarlyLate_rate_Early <- rbindlist(cesa_samples_by_groups$selection)
+
+# reformatting data set
+selection_EarlyLate_rate_Early <- selection_EarlyLate_rate_Early |>
+  select(variant_name, starts_with("selection"), starts_with("log"), starts_with("ci")) |>
+  mutate(variant_name = stringr::str_remove(variant_name, "\\.1")) |>
+  mutate(across(-variant_name, ~replace_na(., 0)))
+
+
+data.table::fwrite(selection_EarlyLate_rate_Early, file = "selection_EarlyLate_rate_Early.txt", sep = "\t")
+
 
 #End
