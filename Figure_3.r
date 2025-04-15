@@ -68,7 +68,6 @@ cesa <- load_maf(cesa = cesa, maf = MAF7, maf_name = "468", coverage = "targeted
                      covered_regions = "msk_468_exons.bed", 
                      covered_regions_name = "MSK_IMPACT_468", covered_regions_padding = 10)
 
-
 cesa <- load_sample_data(cesa, gleason)
 
 #Defining group
@@ -84,7 +83,6 @@ Metastasis_groups <- cesa$samples[Gleason == "Metastasis" & coverage == "exome",
 cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa, covariates = "PRAD", samples = Early_groups, save_all_dndscv_output = T)
 cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, covariates = "PRAD", samples = Late_groups, save_all_dndscv_output = T)
 cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, covariates = "PRAD", samples = Metastasis_groups, save_all_dndscv_output = T)
-
 
 selected_genes <- c("SPOP", "FOXA1", "AR", "PIK3CA", "PIK3CB", "TP53", "ROCK1", "RHOA", "AKT1", "ATM", "CUL3",
                     "APC", "CTNNB1", "PTEN", "KMT2C", "KMT2D")
@@ -172,7 +170,6 @@ for(comp_ind in 1:length(compound)){
   
 }
 
-
 scientific <- function(x){ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", label_scientific()(x)))))}
 
 # selecting necessary data
@@ -204,7 +201,6 @@ rm (cesa_samples_by_groups)
 cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa, covariates = "PRAD", samples = Early_groups, save_all_dndscv_output = T)
 cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, covariates = "PRAD", samples = Late_groups, save_all_dndscv_output = T)
 cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, covariates = "PRAD", samples = Metastasis_groups, save_all_dndscv_output = T)
-
 
 mut_rate_df <- tibble(gene = cesa_samples_by_groups$dNdScv_results$rate_grp_1$genemuts$gene_name,
                       exp_Early_mu = cesa_samples_by_groups$dNdScv_results$rate_grp_1$genemuts$exp_syn_cv,
@@ -301,7 +297,6 @@ selection_data_Early_Metastasis <- selection_data_Early_Metastasis|>
 # defining stages to be plotted
 selection_data_Early_Metastasis$stage <- factor(selection_data_Early_Metastasis$stage, levels = c("Early","Metastasis"))
 
-
 ### Making the Figure:
 
 # Rename a specific word in the Name column with E→L, E→H, L→M, and H→M:
@@ -325,7 +320,6 @@ library(ggplot2)
 distance1 <- 0.5  # Distance between "Lower-risk" and "Higher-risk"
 distance2 <- 1.0  # Distance between "Metastasis from lower-risk" and "Lower-risk"
 distance3 <- 1.6  # Distance between "Metastasis from higher-risk" and "Higher-risk"
-
 
 combined_selection$stage_adjusted <- ifelse(combined_selection$stage == "E → L", 0.1,
                         ifelse(combined_selection$stage == "E → H", 0.1 + distance1,
