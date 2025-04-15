@@ -6,7 +6,6 @@ library(RColorBrewer)
 library(ggrepel)
 library(readr)
 
-
 setwd("C:/Moein/projects/prostate_stages/PRAD_files")
 
 ###Preparing data
@@ -72,7 +71,12 @@ cesa <- load_maf(cesa = cesa, maf = MAF7, maf_name = "468", coverage = "targeted
 
 cesa <- load_sample_data(cesa, gleason)
 
-#defining groups:
+#Defining group
+Early_groups_all <- cesa$samples[Gleason == "Early", unique(Unique_Patient_Identifier)]
+Late_groups_all <- cesa$samples[Gleason == "Late", unique(Unique_Patient_Identifier)]
+Metastasis_groups_all <- cesa$samples[Gleason == "Metastasis", unique(Unique_Patient_Identifier)]
+
+#defining groups for gene mutation rate using exome:
 Early_groups <- cesa$samples[Gleason == "Early" & coverage == "exome", unique(Unique_Patient_Identifier)]
 Late_groups <- cesa$samples[Gleason == "Late" & coverage == "exome", unique(Unique_Patient_Identifier)]
 Metastasis_groups <- cesa$samples[Gleason == "Metastasis" & coverage == "exome", unique(Unique_Patient_Identifier)]
@@ -84,58 +88,6 @@ cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, cov
 
 selected_genes <- c("SPOP", "FOXA1", "AR", "PIK3CA", "PIK3CB", "TP53", "ROCK1", "RHOA", "AKT1", "ATM", "CUL3",
                     "APC", "CTNNB1", "PTEN", "KMT2C", "KMT2D")
-# Create compound variant table ----
-# Get consensus coverage across whichever samples you want to include.
-# Here, we use all WES/TGS, but you could choose to exclude some if they don't cover the genes of interest well.
-all_cov = c(cesa_samples_by_groups$coverage_ranges$exome, cesa_samples_by_groups$coverage_ranges$targeted, cesa_samples_by_groups$coverage_ranges$genome)
-
-# Exclude "exome", since typically "exome+" is what's applicable
-all_cov = all_cov[! names(all_cov) == 'exome'] 
-all_cov = Reduce(GenomicRanges::intersect, all_cov)
-
-
-variants <- select_variants(cesa_samples_by_groups, genes = selected_genes, gr = all_cov)
-
-
-# Further filter variants table based on COSMIC oncogene/TSG classification (exclude nonrecurrent except nonsense for TSGs).
-top_TP53 <- variants[gene == "TP53" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
-top_SPOP <- variants[gene == "SPOP" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
-top_ATM <- variants[gene == "ATM" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
-top_CUL3 <- variants[gene == "CUL3" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
-top_APC <- variants[gene == "APC" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
-top_PTEN <- variants[gene == "PTEN" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
-top_KMT2C <- variants[gene == "KMT2C" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
-top_KMT2D <- variants[gene == "KMT2D" & (maf_prevalence > 1 | (aa_ref != "STOP" & aa_alt == "STOP") | (aa_ref == "STOP" & aa_alt != "STOP")) & intergenic == F]
-
-top_PIK3CA <- variants[gene == "PIK3CA" & (maf_prevalence >1)]
-top_FOXA1 <- variants[gene == "FOXA1" & (maf_prevalence >1)]
-top_ROCK1 <- variants[gene == "ROCK1" & (maf_prevalence >1)]
-top_RHOA <- variants[gene == "RHOA" & (maf_prevalence >1)]
-top_CTNNB1 <- variants[gene == "CTNNB1" & (maf_prevalence > 1)]
-top_PIK3CB <- variants[gene == "PIK3CB" & (maf_prevalence >1)]
-top_AR <- variants[gene == "AR" & (maf_prevalence >1)]
-top_AKT1 <- variants[gene == "AKT1" & (maf_prevalence >1)]
-
-for_comp <- rbind(top_TP53, 
-                  top_SPOP, 
-                  top_ATM, 
-                  top_CUL3, 
-                  top_APC, 
-                  top_PTEN, 
-                  top_KMT2C, 
-                  top_KMT2D, 
-                  top_PIK3CA,
-                  top_FOXA1,
-                  top_ROCK1,
-                  top_RHOA,
-                  top_CTNNB1,
-                  top_PIK3CB,
-                  top_AR,
-                  top_AKT1)
-
-# Define compound variants to find cancer effect sizes at the gene level and not for individual variants
-compound <- define_compound_variants(cesa = cesa_samples_by_groups, variant_table = for_comp, by = "gene", merge_distance = Inf)
-
 
 RefCDS = ces.refset.hg19$RefCDS
 dndscv_gene_names <- cesa_samples_by_groups$gene_rates$gene
@@ -156,6 +108,7 @@ mut_rate_df <- tibble(gene = cesa_samples_by_groups$dNdScv_results$rate_grp_2$ge
                       exp_Late_mu = cesa_samples_by_groups$dNdScv_results$rate_grp_2$genemuts$exp_syn_cv,
                       exp_Metastasis_mu = cesa_samples_by_groups$dNdScv_results$rate_grp_3$genemuts$exp_syn_cv)
 
+# Add n_syn_sites column to mut_rate_df:
 mut_rate_df$n_syn_sites = nsyn_sites[mut_rate_df$gene]
 
 mut_rate_df %>% 
@@ -169,23 +122,27 @@ rate_1 <- mut_rate_df|>
   select(gene, Late_mu)
 rate_2 <- mut_rate_df|>
   select(gene, Metastasis_mu)
-
+  
 # change in mutation rate across stages
 mut_rate_df <- mut_rate_df %>% 
   select(gene, Late_mu, Metastasis_mu) %>% 
   mutate(p_1 = Late_mu / Metastasis_mu) %>% 
   mutate(p_2 = 1 - p_1)
   
-# saving "last" gene mutation rates into separate data frame, "last" rates meaning from last stage Metastasis_mu
-set_cancer_rates <- mut_rate_df %>%
-  select(gene, Metastasis_mu) %>%
+# saving gene mutation rates into separate data frame:
+Late_rate <- mut_rate_df %>%
+  select(gene, rate = Late_mu) %>%
+  data.table::setDT()
+Meta_rate <- mut_rate_df %>%
+  select(gene, rate = Metastasis_mu) %>%
   data.table::setDT()
 
 # clear the gene rates in the cesa object 
 cesa_samples_by_groups <- clear_gene_rates(cesa = cesa_samples_by_groups)
 
-# setting gene rates to highest rates from Metastasis_mu
-cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = set_cancer_rates, missing_genes_take_nearest = T) 
+# setting gene rates for Late and Metastasis:
+cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Late_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Late"]) 
+cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Meta_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Metastasis"]) 
 
 # infer trinculeotide-context-specific relative rates of SNV mutation from a mutational signature analysis
 signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
@@ -193,6 +150,11 @@ signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD"
 # estimating trinucleotide mutation rates
 cesa_samples_by_groups <- trinuc_mutation_rates(cesa = cesa_samples_by_groups, signature_set = "COSMIC_v3.2", signature_exclusions = signature_exclusions)
 
+# defining compound variants
+compound <- define_compound_variants(cesa = cesa_samples_by_groups, 
+                                     variant_table = cesa_samples_by_groups$variants |>
+                                       filter(intergenic == F, gene %in% selected_genes),
+                                     by = "gene", merge_distance = Inf)
 
 source("new_sequential_lik.R")
 
@@ -205,7 +167,7 @@ for(comp_ind in 1:length(compound)){
   these_props <- c(these_props$p_1, these_props$p_2)
   
   cesa_samples_by_groups <- ces_variant(cesa = cesa_samples_by_groups, variants = this_comp, model = sequential_lik_dev, 
-                                        ordering_col = 'Gleason', ordering = c('Late', 'Metastasis'), 
+                                        ordering_col = 'Gleason', ordering = c('Late', 'Metastasis'), samples = c(Late_groups_all, Metastasis_groups_all), 
                                         lik_args = list(sequential_mut_prop = these_props), run_name = this_gene)
   
 }
@@ -268,22 +230,39 @@ mut_rate_df <- mut_rate_df %>%
   mutate(p_1 = Early_mu / Metastasis_mu) %>% 
   mutate(p_2 = 1 - p_1)
   
-# saving "last" gene mutation rates into separate data frame, "last" rates meaning from last stage Metastasis_mu
-set_cancer_rates <- mut_rate_df %>%
-  select(gene, Metastasis_mu) %>%
+# saving gene mutation rates into separate data frame:
+Early_rate <- mut_rate_df %>%
+  select(gene, rate = Early_mu) %>%
+  data.table::setDT()
+Meta_rate <- mut_rate_df %>%
+  select(gene, rate = Metastasis_mu) %>%
   data.table::setDT()
 
 # clear the gene rates in the cesa object 
 cesa_samples_by_groups <- clear_gene_rates(cesa = cesa_samples_by_groups)
 
+# setting gene rates for Late and Metastasis:
+cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Early_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Early"]) 
+cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Meta_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Metastasis"]) 
+
+
+# clear the gene rates in the cesa object 
+#cesa_samples_by_groups <- clear_gene_rates(cesa = cesa_samples_by_groups)
+
 # setting gene rates to highest rates from Metastasis_mu
-cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = set_cancer_rates, missing_genes_take_nearest = T) 
+#cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = set_cancer_rates, missing_genes_take_nearest = T) 
 
 # infer trinculeotide-context-specific relative rates of SNV mutation from a mutational signature analysis
 signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
 
 # estimating trinucleotide mutation rates
 cesa_samples_by_groups <- trinuc_mutation_rates(cesa = cesa_samples_by_groups, signature_set = "COSMIC_v3.2", signature_exclusions = signature_exclusions)
+
+# defining compound variants
+compound <- define_compound_variants(cesa = cesa_samples_by_groups, 
+                                     variant_table = cesa_samples_by_groups$variants |>
+                                       filter(intergenic == F, gene %in% selected_genes),
+                                     by = "gene", merge_distance = Inf)
 
 source("new_sequential_lik.R")
 
@@ -296,7 +275,7 @@ for(comp_ind in 1:length(compound)){
   these_props <- c(these_props$p_1, these_props$p_2)
   
   cesa_samples_by_groups <- ces_variant(cesa = cesa_samples_by_groups, variants = this_comp, model = sequential_lik_dev, 
-                                        ordering_col = 'Gleason', ordering = c('Early', 'Metastasis'), 
+                                        ordering_col = 'Gleason', ordering = c('Early', 'Metastasis'), samples = c(Early_groups_all, Metastasis_groups_all),
                                         lik_args = list(sequential_mut_prop = these_props), run_name = this_gene)
   
 }
@@ -325,7 +304,7 @@ selection_data_Early_Metastasis$stage <- factor(selection_data_Early_Metastasis$
 
 ### Making the Figure:
 
-# Rename a specific word in the Name column
+# Rename a specific word in the Name column with E→L, E→H, L→M, and H→M:
 selection_data_Early_Metastasis$stage <- sub("Early", "E → L", selection_data_Early_Metastasis$stage)
 selection_data_Early_Metastasis$stage <- sub("Metastasis", "L → M", selection_data_Early_Metastasis$stage)
 selection_data$stage <- sub("Late", "E → H", selection_data$stage)
@@ -333,7 +312,8 @@ selection_data$stage <- sub("Metastasis", "H → M", selection_data$stage)
 
 combined_selection <- rbind(selection_data_Early_Metastasis, selection_data)
 
-variant_order <- c("CUL3", "SPOP", "PIK3CA", "AKT1", "ATM", "KMT2C", "KMT2D", "FOXA1", "APC", "ROCK1", "RHOA", "PTEN", "TP53", "CTNNB1", "PIK3CB", "AR") 
+variant_order <- c("SPOP", "AKT1", "KMT2D", "CTNNB1", "CUL3", "PIK3CA", "TP53", "FOXA1", "ATM", "KMT2C", "PTEN", "APC", "RHOA", "ROCK1", "PIK3CB", "AR") 
+
 stage_order <- c("E → L", "E → H", "L → M", "H → M")
 combined_selection$stage <- factor(combined_selection$stage, levels = stage_order)
 
@@ -342,9 +322,9 @@ library(stringr)
 library(dplyr)
 library(ggplot2)
 
-distance1 <- 1.1  # Distance between "Lower-risk" and "Higher-risk"
-distance2 <- 1.0  # Distance between "Metastasis_Lower-risk" and "Lower-risk"
-distance3 <- 1.6  # Distance between "Metastasis_Higher-risk" and "Higher-risk"
+distance1 <- 0.5  # Distance between "Lower-risk" and "Higher-risk"
+distance2 <- 1.0  # Distance between "Metastasis from lower-risk" and "Lower-risk"
+distance3 <- 1.6  # Distance between "Metastasis from higher-risk" and "Higher-risk"
 
 
 combined_selection$stage_adjusted <- ifelse(combined_selection$stage == "E → L", 0.1,
@@ -358,7 +338,7 @@ Figure_3 <- ggplot(combined_selection, aes(x = stage_adjusted, y = si, color = s
 	geom_errorbar(aes(ymin = ci_low_95, ymax = ci_high_95), width = .5) +
     facet_wrap(~ factor(variant_name, levels = variant_order), scales = "free_y", ncol = 4) + 
 	theme_bw() + xlab("") + ylab("Cancer effect size") +
-	theme(legend.position = "bottom", legend.title = element_blank(), axis.text.x = element_blank(), legend.text = element_text(size = 12)) +
+	theme(legend.position = "bottom", legend.title = element_blank(), axis.text.x = element_blank(), legend.text = element_text(size = 11.8)) +
 	  scale_y_continuous(labels = scientific) +
 	  theme(text = element_text(size = 12)) +  
 	  expand_limits(y = 0) +
@@ -366,6 +346,6 @@ Figure_3 <- ggplot(combined_selection, aes(x = stage_adjusted, y = si, color = s
 	  scale_color_manual(values = c("red", "blue", "red", "blue")) +
 	  scale_x_continuous(breaks = combined_selection$stage_adjusted, labels = combined_selection$stage)
  
-ggsave("Figure_3.png", plot = Figure_3, width = 8, height = 9)
+ggsave("Figure_3_333.png", plot = Figure_3, width = 8, height = 9.2)
 
 #End
