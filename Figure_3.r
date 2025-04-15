@@ -241,13 +241,6 @@ cesa_samples_by_groups <- clear_gene_rates(cesa = cesa_samples_by_groups)
 cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Early_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Early"]) 
 cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Meta_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Metastasis"]) 
 
-
-# clear the gene rates in the cesa object 
-#cesa_samples_by_groups <- clear_gene_rates(cesa = cesa_samples_by_groups)
-
-# setting gene rates to highest rates from Metastasis_mu
-#cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = set_cancer_rates, missing_genes_take_nearest = T) 
-
 # infer trinculeotide-context-specific relative rates of SNV mutation from a mutational signature analysis
 signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
 
