@@ -311,14 +311,11 @@ signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD"
 # estimating trinucleotide mutation rates
 cesa_samples_by_groups <- trinuc_mutation_rates(cesa = cesa_samples_by_groups, signature_set = "COSMIC_v3.2", signature_exclusions = signature_exclusions)
 
-
 # defining compound variants
 compound <- define_compound_variants(cesa = cesa_samples_by_groups, 
                                      variant_table = cesa_samples_by_groups$variants |>
                                        filter(intergenic == F, gene %in% selected_genes),
                                      by = "gene", merge_distance = Inf)
-
-
 
 for (comp_ind in 1:length(compound)) {
   
@@ -333,7 +330,6 @@ for (comp_ind in 1:length(compound)) {
   )
 }
 
-
 # selecting necessary data
 
 selection_EarlyLate_rate_Early <- rbindlist(cesa_samples_by_groups$selection)
@@ -343,7 +339,6 @@ selection_EarlyLate_rate_Early <- selection_EarlyLate_rate_Early |>
   select(variant_name, starts_with("selection"), starts_with("log"), starts_with("ci")) |>
   mutate(variant_name = stringr::str_remove(variant_name, "\\.1")) |>
   mutate(across(-variant_name, ~replace_na(., 0)))
-
 
 data.table::fwrite(selection_EarlyLate_rate_Early, file = "selection_EarlyLate_rate_Early.txt", sep = "\t")
 
@@ -367,14 +362,11 @@ signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD"
 # estimating trinucleotide mutation rates
 cesa_samples_by_groups <- trinuc_mutation_rates(cesa = cesa_samples_by_groups, signature_set = "COSMIC_v3.2", signature_exclusions = signature_exclusions)
 
-
 # defining compound variants
 compound <- define_compound_variants(cesa = cesa_samples_by_groups, 
                                      variant_table = cesa_samples_by_groups$variants |>
                                        filter(intergenic == F, gene %in% selected_genes),
                                      by = "gene", merge_distance = Inf)
-
-
 
 for (comp_ind in 1:length(compound)) {
   
@@ -389,7 +381,6 @@ for (comp_ind in 1:length(compound)) {
   )
 }
 
-
 # selecting necessary data
 
 selection_EarlyLate_rate_Late <- rbindlist(cesa_samples_by_groups$selection)
@@ -399,7 +390,6 @@ selection_EarlyLate_rate_Late <- selection_EarlyLate_rate_Late |>
   select(variant_name, starts_with("selection"), starts_with("log"), starts_with("ci")) |>
   mutate(variant_name = stringr::str_remove(variant_name, "\\.1")) |>
   mutate(across(-variant_name, ~replace_na(., 0)))
-
 
 data.table::fwrite(selection_EarlyLate_rate_Late, file = "selection_EarlyLate_rate_Late.txt", sep = "\t")
 
