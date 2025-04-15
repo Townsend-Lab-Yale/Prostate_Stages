@@ -149,15 +149,15 @@ scientific <- function(x){ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e",
 
 # selecting necessary data
 
-selection_Late&Meta_rate_Meta <- rbindlist(cesa_samples_by_groups$selection)
+selection_LateMeta_rate_Meta <- rbindlist(cesa_samples_by_groups$selection)
 
 # reformatting data set
-selection_Late&Meta_rate_Meta <- selection_Late&Meta_rate_Meta |>
+selection_LateMeta_rate_Meta <- selection_LateMeta_rate_Meta |>
   select(variant_name, starts_with("selection"), starts_with("log"), starts_with("ci")) |>
   mutate(variant_name = stringr::str_remove(variant_name, "\\.1")) |>
   mutate(across(-variant_name, ~replace_na(., 0)))
 
-data.table::fwrite(selection_Late&Meta_rate_Meta, file = "selection_Late&Meta_rate_Meta.txt", sep = "\t")
+data.table::fwrite(selection_LateMeta_rate_Meta, file = "selection_LateMeta_rate_Meta.txt", sep = "\t")
 
 ### selection intensity of Early & Metastasis using mutation rate of Metastasis:
 
@@ -179,15 +179,15 @@ for (comp_ind in 1:length(compound)) {
 
 # selecting necessary data
 
-selection_Early&Meta_rate_Meta <- rbindlist(cesa_samples_by_groups$selection)
+selection_EarlyMeta_rate_Meta <- rbindlist(cesa_samples_by_groups$selection)
 
 # reformatting data set
-selection_Early&Meta_rate_Meta <- selection_Early&Meta_rate_Meta |>
+selection_EarlyMeta_rate_Meta <- selection_EarlyMeta_rate_Meta |>
   select(variant_name, starts_with("selection"), starts_with("log"), starts_with("ci")) |>
   mutate(variant_name = stringr::str_remove(variant_name, "\\.1")) |>
   mutate(across(-variant_name, ~replace_na(., 0)))
 
-data.table::fwrite(selection_Early&Meta_rate_Meta, file = "selection_Early&Meta_rate_Meta.txt", sep = "\t")
+data.table::fwrite(selection_EarlyMeta_rate_Meta, file = "selection_EarlyMeta_rate_Meta.txt", sep = "\t")
 
 ### selection intensity of Late & Metastasis using mutation rate of Late:
 
@@ -230,15 +230,15 @@ for (comp_ind in 1:length(compound)) {
 
 # selecting necessary data
 
-selection_Late&Meta_rate_Late <- rbindlist(cesa_samples_by_groups$selection)
+selection_LateMeta_rate_Late <- rbindlist(cesa_samples_by_groups$selection)
 
 # reformatting data set
-selection_Late&Meta_rate_Late <- selection_Late&Meta_rate_Late |>
+selection_LateMeta_rate_Late <- selection_LateMeta_rate_Late |>
   select(variant_name, starts_with("selection"), starts_with("log"), starts_with("ci")) |>
   mutate(variant_name = stringr::str_remove(variant_name, "\\.1")) |>
   mutate(across(-variant_name, ~replace_na(., 0)))
 
-data.table::fwrite(selection_Late&Meta_rate_Late, file = "selection_Late&Meta_rate_Late.txt", sep = "\t")
+data.table::fwrite(selection_LateMeta_rate_Late, file = "selection_LateMeta_rate_Late.txt", sep = "\t")
 
 ### selection intensity of Early & Metastasis using mutation rate of Early:
 
@@ -281,15 +281,15 @@ for (comp_ind in 1:length(compound)) {
 
 # selecting necessary data
 
-selection_Early&Meta_rate_Early <- rbindlist(cesa_samples_by_groups$selection)
+selection_EarlyMeta_rate_Early <- rbindlist(cesa_samples_by_groups$selection)
 
 # reformatting data set
-selection_Early&Meta_rate_Early <- selection_Early&Meta_rate_Early |>
+selection_EarlyMeta_rate_Early <- selection_EarlyMeta_rate_Early |>
   select(variant_name, starts_with("selection"), starts_with("log"), starts_with("ci")) |>
   mutate(variant_name = stringr::str_remove(variant_name, "\\.1")) |>
   mutate(across(-variant_name, ~replace_na(., 0)))
 
-data.table::fwrite(selection_Early&Meta_rate_Early, file = "selection_Early&Meta_rate_Early.txt", sep = "\t")
+data.table::fwrite(selection_EarlyMeta_rate_Early, file = "selection_EarlyMeta_rate_Early.txt", sep = "\t")
 
 ### selection intensity of Early & Late using mutation rate of Early:
 
