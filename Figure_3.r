@@ -292,17 +292,17 @@ selection_data_Early_Metastasis$stage <- factor(selection_data_Early_Metastasis$
 
 ### Making the Figure:
 
-# Rename a specific word in the Name column with E→L, E→H, L→M, and H→M:
-selection_data_Early_Metastasis$stage <- sub("Early", "E → L", selection_data_Early_Metastasis$stage)
+# Rename a specific word in the Name column with O→L, O→H, L→M, and H→M:
+selection_data_Early_Metastasis$stage <- sub("Early", "O → L", selection_data_Early_Metastasis$stage)
 selection_data_Early_Metastasis$stage <- sub("Metastasis", "L → M", selection_data_Early_Metastasis$stage)
-selection_data$stage <- sub("Late", "E → H", selection_data$stage)
+selection_data$stage <- sub("Late", "O → H", selection_data$stage)
 selection_data$stage <- sub("Metastasis", "H → M", selection_data$stage)
 
 combined_selection <- rbind(selection_data_Early_Metastasis, selection_data)
 
 variant_order <- c("SPOP", "AKT1", "KMT2D", "CTNNB1", "CUL3", "PIK3CA", "TP53", "FOXA1", "ATM", "KMT2C", "PTEN", "APC", "RHOA", "ROCK1", "PIK3CB", "AR") 
 
-stage_order <- c("E → L", "E → H", "L → M", "H → M")
+stage_order <- c("O → L", "O → H", "L → M", "H → M")
 combined_selection$stage <- factor(combined_selection$stage, levels = stage_order)
 
 library(scales)
@@ -314,8 +314,8 @@ distance1 <- 0.5  # Distance between "Lower-risk" and "Higher-risk"
 distance2 <- 1.0  # Distance between "Metastasis from lower-risk" and "Lower-risk"
 distance3 <- 1.6  # Distance between "Metastasis from higher-risk" and "Higher-risk"
 
-combined_selection$stage_adjusted <- ifelse(combined_selection$stage == "E → L", 0.1,
-                        ifelse(combined_selection$stage == "E → H", 0.1 + distance1,
+combined_selection$stage_adjusted <- ifelse(combined_selection$stage == "O → L", 0.1,
+                        ifelse(combined_selection$stage == "O → H", 0.1 + distance1,
                                ifelse(combined_selection$stage == "L → M", 0.1 + distance1 + distance2,
                                       ifelse(combined_selection$stage == "H → M", 0.1 + distance1 + distance3,
                                              NA))))										 
@@ -333,6 +333,6 @@ Figure_3 <- ggplot(combined_selection, aes(x = stage_adjusted, y = si, color = s
 	  scale_color_manual(values = c("red", "blue", "red", "blue")) +
 	  scale_x_continuous(breaks = combined_selection$stage_adjusted, labels = combined_selection$stage)
  
-ggsave("Figure_3_333.png", plot = Figure_3, width = 8, height = 9.2)
+ggsave("Figure_3.png", plot = Figure_3, width = 8, height = 9.2)
 
 #End
