@@ -8,7 +8,7 @@ library(ggrepel)
 library(dplyr)
 library(ggplot2)
 library(tidyr)
-library(ggpubr)  # For better publication-style themes
+library(ggpubr)  
 
 # Set working directory
 setwd("C:/Moein/projects/prostate_stages/PRAD_files")
@@ -67,7 +67,7 @@ filtered_metastasis <- metastasis %>%
   filter(genes %in% genes_of_interest) %>%
   distinct(Unique_Patient_Identifier, genes)
 
-# Count unique patients per gene and normalize frequency
+# Count unique patients per gene
 lower_grade_gene_frequencies <- filtered_lower_grade %>%
   group_by(genes) %>%
   summarise(Unique_Patient_Count = n(), .groups = "drop") %>%
@@ -139,16 +139,15 @@ ggplot(combined_gene_frequencies, aes(x = genes, y = Frequency_Percentage, fill 
   scale_fill_identity() +  # Apply precomputed colors
   theme_pubr(base_size = 16) +  # Professional journal-quality theme
   theme(
-    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 14, color = "black"),  # Rotated X-axis labels
+    axis.text.x = element_text(angle = 45, hjust = 1, vjust = 1, size = 14, color = "black"),  
     axis.text.y = element_text(size = 14, color = "black"),
     axis.title = element_text(size = 18, face = "bold"),
     strip.text = element_text(size = 18, face = "bold"),  # Bold panel labels
     panel.grid.major = element_blank(),
     panel.grid.minor = element_blank(),
-    legend.position = "none"  # No legend needed since we have facets
+    legend.position = "none"  
   )
 
-# Save high-resolution figures
 ggsave("Gene_Mutation_Frequency_High_Impact.png", width = 10, height = 12, dpi = 600)
 ggsave("Gene_Mutation_Frequency_High_Impact.tiff", width = 10, height = 12, dpi = 600, compression = "lzw")
 ggsave("Gene_Mutation_Frequency_High_Impact.pdf", width = 10, height = 12)
