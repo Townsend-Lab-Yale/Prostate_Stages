@@ -332,9 +332,16 @@ mutrates_primary_plot <- ggplot() +
 ###Combine_Figures    
 library(cowplot)
 
-combined_gene_mutrate <-plot_grid(mutrates_early_plot, mutrates_early_metastasis_plot, mutrates_late_plot, mutrates_late_metastasis_plot, mutrates_metastasis_plot, mutrates_prim_met_plot,
-                                  labels = c("A", "D", "B", "E", "C", "F"), label_size = 12,
-                                  align="h", axis="t", nrow=3, ncol=2, rel_heights = c(1,1,1))
+combined_gene_mutrate <- plot_grid(
+  mutrates_early_plot, mutrates_early_metastasis_plot,
+  mutrates_late_plot, mutrates_late_metastasis_plot,
+  mutrates_metastasis_plot, mutrates_prim_met_plot,
+  labels = c("A", "D", "B", "E", "C", "F"),
+  label_size = 12,
+  align = "h", axis = "tb",
+  nrow = 3, ncol = 2,
+  rel_heights = c(1, 1, 1)
+)
 
 ggsave("combined_gene_mutrate.png", width = 8, dpi=600, height = 10)
 
