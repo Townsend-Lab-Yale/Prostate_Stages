@@ -81,18 +81,13 @@ signature_exclusions = suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
 SPOP3 = trinuc_mutation_rates(SPOP2, ces.refset.hg19$signatures$COSMIC_v3.2,
                              signature_exclusions = signature_exclusions)
 
-#to_remove = suggest_cosmic_signatures_to_remove(cancer_type = "PRAD")
-
-#SPOP3 = trinuc_mutation_rates(SPOP2, signature_set = "COSMIC_v3.2",
- #                             signature_extractor = "deconstructSigs",
-  #                            signatures_to_remove = to_remove)
 
 saveRDS(SPOP3, file = "SPOP3.rds")
 
 SPOP4 = gene_mutation_rates(SPOP3, covariates = "PRAD")
 saveRDS(SPOP4, file = "SPOP4.rds")
 
-SPOP_final = ces_variant(SPOP4, variants = select_variants(SPOP4, min_freq = 1), model = "sswm")
+SPOP_final = ces_variant(SPOP4, variants = select_variants(SPOP4, min_freq = 2))
 saveRDS(SPOP_final, file="SPOP_final.rds")
 
 ### making the figure:
@@ -134,16 +129,16 @@ bargraph_SPOP_SI <- ggplot(data=PRAD_results_recurrent, aes(x=reorder(variant_na
   theme(panel.background = element_blank()) +
   theme(panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) +
   theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank()) +
-  geom_text(aes(label=included_with_variant, y=-5000), size = common.text.size) +
-  scale_y_continuous(labels=scientific, breaks = c(0, 5e4, 1e5, 1.5e5, 2e5))
+  geom_text(aes(label=included_with_variant, y= -3000), size = common.text.size) +  # adjusted y value
+  scale_y_continuous(labels=scientific, breaks = c(0, 2e4, 4e4, 6e4, 8e4), limits = c(-3e3, 1e5))
+
+setwd("C:/Moein/projects/prostate_stages/PRAD_files/PRAD_figures/Figures")
 
 ggsave("SPOP_recurrent_SI.png", width=8, height=5.25)
 
 #End
 
 ###Overlay SPOP_labeled_2.png onto SPOP_recurrent_SI.png:
-
-setwd("C:/Moein/projects/prostate_stages/PRAD_files/PRAD_figures/Figures")
 
 library(magick)
 
@@ -168,6 +163,6 @@ merged_image <- image_composite(image1, image2, offset = paste0("+", offset_x, "
 
 
 # Write the merged image to a file
-image_write(merged_image, "Figure_4.png")
+image_write(merged_image, "Figure_5_SPOP.png")
 
 #End
