@@ -160,7 +160,5 @@ merged_image <- image_composite(image1, image2, offset = paste0("+", offset_x, "
 # Write the merged image to a file
 image_write(merged_image, "Figure_6_AR.png")
 
-#End
-
 
 #End
