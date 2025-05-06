@@ -67,15 +67,14 @@ AR2 = load_maf(cesa = AR2, maf = MAF7, coverage = "targeted",
                      covered_regions = "msk_468_exons.bed",
                      covered_regions_name = "MSK_IMPACT_468", covered_regions_padding = 10)
 
-
 saveRDS(AR2, file = "AR2.rds")
 
+##Mutational processes and relative mutation rates:
+signature_exclusions = suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
 
-to_remove = suggest_cosmic_signatures_to_remove(cancer_type = "PRAD")
+AR3 = trinuc_mutation_rates(AR2, ces.refset.hg19$signatures$COSMIC_v3.2,
+                             signature_exclusions = signature_exclusions)
 
-AR3 = trinuc_mutation_rates(AR2, signature_set = "COSMIC_v3.2",
-                                  signature_extractor = "deconstructSigs",
-                                  signatures_to_remove = to_remove)
 saveRDS(AR3, file = "AR3.rds")
 
 AR4 = gene_mutation_rates(AR3, covariates = "PRAD")
@@ -126,7 +125,40 @@ bargraph_AR_SI <- ggplot(data=PRAD_results_recurrent, aes(x=reorder(variant_name
   geom_text(aes(label=included_with_variant, y=-5000), size = common.text.size) +
   scale_y_continuous(labels=scientific, breaks = c(0, 1e4, 2e4, 3e4, 4e4, 5e4))
 
+
+setwd("C:/Moein/projects/prostate_stages/PRAD_files/PRAD_figures/Figures")
+
 ggsave("AR_recurrent_SI.png", width=8, height=5.25)
+
+
+###Overlay SPOP_labeled_2.png onto AR_recurrent_SI.png:
+
+library(magick)
+
+# Set the file paths for the two PNG images you want to merge
+file1 <- "AR_recurrent_SI.png"
+file2 <- "AR_labeled_2.png"
+
+# Read the images
+image1 <- image_read(file1)
+image2 <- image_read(file2)
+
+# Get the dimensions of image1
+width1 <- image_info(image1)$width
+height1 <- image_info(image1)$height
+
+# Calculate the offset to position image2 in the upper right corner of image1
+offset_x <- width1 - image_info(image2)$width
+offset_y <- 0
+
+# Overlay image2 onto image1
+merged_image <- image_composite(image1, image2, offset = paste0("+", offset_x, "+", offset_y))
+
+
+# Write the merged image to a file
+image_write(merged_image, "Figure_6_AR.png")
+
+#End
 
 
 #End
