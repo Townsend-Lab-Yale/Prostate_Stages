@@ -324,7 +324,7 @@ Figure_3 <- ggplot(combined_selection, aes(x = stage_adjusted, y = si, color = s
     geom_point(size = 1.5) + 
 	geom_errorbar(aes(ymin = ci_low_95, ymax = ci_high_95), width = .5) +
     facet_wrap(~ factor(variant_name, levels = variant_order), scales = "free_y", ncol = 4) + 
-	theme_bw() + xlab("") + ylab("Cancer effect size") +
+	theme_bw() + xlab("") + ylab("Scaled selection coefficient") +
 	theme(legend.position = "bottom", legend.title = element_blank(), axis.text.x = element_blank(), legend.text = element_text(size = 11.8), axis.title.y = element_text(size = 16)) +
 	  scale_y_continuous(labels = scientific) +
 	  theme(text = element_text(size = 12)) +  
