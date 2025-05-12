@@ -207,7 +207,7 @@ selection_data_Early_Late_Metastasis$stage <- sub("Early", "O → L", selection_
 selection_data_Early_Late_Metastasis$stage <- sub("Late", "L → H", selection_data_Early_Late_Metastasis$stage)
 selection_data_Early_Late_Metastasis$stage <- sub("Metastasis", "H → M", selection_data_Early_Late_Metastasis$stage)
 
-variant_order <- c("SPOP", "AKT1", "KMT2D", "CTNNB1", "CUL3", "PIK3CA", "TP53", "FOXA1", "ATM", "KMT2C", "PTEN", "APC", "RHOA", "ROCK1",  "PIK3CB", "AR") 
+variant_order <- c("SPOP", "AKT1", "KMT2D", "CTNNB1", "CUL3", "PIK3CA", "TP53", "FOXA1", "ATM", "KMT2C", "PTEN", "APC", "RHOA", "ROCK1", "PIK3CB", "AR") 
 stage_order <- c("O → L", "L → H", "H → M")
 selection_data_Early_Late_Metastasis$stage <- factor(selection_data_Early_Late_Metastasis$stage, levels = stage_order)
 
