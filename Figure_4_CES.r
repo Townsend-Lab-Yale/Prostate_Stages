@@ -237,7 +237,7 @@ Meta_rate <- mut_rate_df %>%
 # clear the gene rates in the cesa object 
 cesa_samples_by_groups <- clear_gene_rates(cesa = cesa_samples_by_groups)
 
-# setting gene rates for Late and Metastasis:
+# setting gene rates for Early and Metastasis:
 cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Early_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Early"]) 
 cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Meta_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Metastasis"]) 
 
