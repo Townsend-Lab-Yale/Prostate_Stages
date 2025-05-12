@@ -71,7 +71,13 @@ cesa <- load_maf(cesa = cesa, maf = MAF7, maf_name = "468", coverage = "targeted
 
 cesa <- load_sample_data(cesa, gleason)
 
+
 #defining groups:
+Early_groups_all <- cesa$samples[Gleason == "Early", unique(Unique_Patient_Identifier)]
+Late_groups_all <- cesa$samples[Gleason == "Late", unique(Unique_Patient_Identifier)]
+Metastasis_groups_all <- cesa$samples[Gleason == "Metastasis", unique(Unique_Patient_Identifier)]
+
+#defining groups for gene mutation rate using exome:
 Early_groups <- cesa$samples[Gleason == "Early" & coverage == "exome", unique(Unique_Patient_Identifier)]
 Late_groups <- cesa$samples[Gleason == "Late" & coverage == "exome", unique(Unique_Patient_Identifier)]
 Metastasis_groups <- cesa$samples[Gleason == "Metastasis" & coverage == "exome", unique(Unique_Patient_Identifier)]
@@ -79,19 +85,6 @@ Metastasis_groups <- cesa$samples[Gleason == "Metastasis" & coverage == "exome",
 cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa, covariates = "PRAD", samples = Early_groups, save_all_dndscv_output = T)
 cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, covariates = "PRAD", samples = Late_groups, save_all_dndscv_output = T)
 cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, covariates = "PRAD", samples = Metastasis_groups, save_all_dndscv_output = T)
-
-
-
-#defining groups:
-Early_groups <- cesa$samples[Gleason == "Early", unique(Unique_Patient_Identifier)]
-Late_groups <- cesa$samples[Gleason == "Late", unique(Unique_Patient_Identifier)]
-Metastasis_groups <- cesa$samples[Gleason == "Metastasis", unique(Unique_Patient_Identifier)]
-
-cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa, covariates = "PRAD", samples = Early_groups, save_all_dndscv_output = T)
-cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, covariates = "PRAD", samples = Late_groups, save_all_dndscv_output = T)
-cesa_samples_by_groups <- gene_mutation_rates(cesa = cesa_samples_by_groups, covariates = "PRAD", samples = Metastasis_groups, save_all_dndscv_output = T)
-
-
 
 
 selected_genes <- c("SPOP", "FOXA1", "AR", "PIK3CA", "PIK3CB", "TP53", "ROCK1", "RHOA", "AKT1", "ATM", "CUL3",
@@ -110,8 +103,9 @@ samples_in_Late_groups <- length(unique(cesa_samples_by_groups$dNdScv_results$ra
 # selecting mutation rate data for samples in Metastasis_groups
 samples_in_Metastasis_groups <- length(unique(cesa_samples_by_groups$dNdScv_results$rate_grp_3$annotmuts$sampleID ))
 
+
 library(tidyverse)
-### creating a data frame with mutation rate data for Late_groups and Metastasis_groups
+### creating a data frame with mutation rate data for Early_group, Late_groups and Metastasis_groups
 mut_rate_df <- tibble(gene = cesa_samples_by_groups$dNdScv_results$rate_grp_2$genemuts$gene_name,
                       exp_Early_mu = cesa_samples_by_groups$dNdScv_results$rate_grp_1$genemuts$exp_syn_cv,
 					  exp_Late_mu = cesa_samples_by_groups$dNdScv_results$rate_grp_2$genemuts$exp_syn_cv,
@@ -134,16 +128,24 @@ mut_rate_df <- mut_rate_df %>%
   mutate(p_2 = (Late_mu - Early_mu)/Metastasis_mu) %>%
   mutate(p_3 = 1 - (p_1+p_2))
    
-# saving "last" gene mutation rates into separate data frame, "last" rates meaning from last stage Metastasis_mu
-set_cancer_rates <- mut_rate_df %>%
-  select(gene, Metastasis_mu) %>%
+# saving gene mutation rates into separate data frame:
+Early_rate <- mut_rate_df %>%
+  select(gene, rate = Early_mu) %>%
+  data.table::setDT()
+Late_rate <- mut_rate_df %>%
+  select(gene, rate = Late_mu) %>%
+  data.table::setDT()
+Meta_rate <- mut_rate_df %>%
+  select(gene, rate = Metastasis_mu) %>%
   data.table::setDT()
 
 # clear the gene rates in the cesa object 
 cesa_samples_by_groups <- clear_gene_rates(cesa = cesa_samples_by_groups)
 
-# setting gene rates to highest rates from Metastasis_mu
-cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = set_cancer_rates, missing_genes_take_nearest = T) 
+# setting gene rates for Early, Late and Metastasis:
+cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Early_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Early"]) 
+cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Late_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Late"]) 
+cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Meta_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Metastasis"]) 
 
 # infer trinculeotide-context-specific relative rates of SNV mutation from a mutational signature analysis
 signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
@@ -201,12 +203,12 @@ selection_data_Early_Late_Metastasis$stage <- factor(selection_data_Early_Late_M
 ### Making the Figure:
 
 # Rename a specific word in the Name column
-selection_data_Early_Late_Metastasis$stage <- sub("Early", "Lower-grade", selection_data_Early_Late_Metastasis$stage)
-selection_data_Early_Late_Metastasis$stage <- sub("Late", "Higher-grade", selection_data_Early_Late_Metastasis$stage)
-selection_data_Early_Late_Metastasis$stage <- sub("Metastasis_Lower-grade", "Metastasis", selection_data_Early_Late_Metastasis$stage)
+selection_data_Early_Late_Metastasis$stage <- sub("Early", "O → L", selection_data_Early_Late_Metastasis$stage)
+selection_data_Early_Late_Metastasis$stage <- sub("Late", "L → H", selection_data_Early_Late_Metastasis$stage)
+selection_data_Early_Late_Metastasis$stage <- sub("Metastasis", "H → M", selection_data_Early_Late_Metastasis$stage)
 
 variant_order <- c("CUL3", "SPOP", "PIK3CA", "AKT1", "ATM", "KMT2C", "KMT2D", "FOXA1", "APC", "ROCK1", "RHOA", "PTEN", "TP53", "CTNNB1", "PIK3CB", "AR") 
-stage_order <- c("Lower-grade", "Higher-grade", "Metastasis")
+stage_order <- c("O → L", "L → H", "H → M")
 selection_data_Early_Late_Metastasis$stage <- factor(selection_data_Early_Late_Metastasis$stage, levels = stage_order)
 
 library(scales)
@@ -218,16 +220,16 @@ distance1 <- 1.1  # Distance between "Lower-grade" and "Higher-grade"
 distance2 <- 1.0  # Distance between "Metastasis" and "Higher-grade"
 
 
-selection_data_Early_Late_Metastasis$stage_adjusted <- ifelse(selection_data_Early_Late_Metastasis$stage == "Lower-grade", 0.1,
-                        ifelse(selection_data_Early_Late_Metastasis$stage == "Higher-grade", 0.1 + distance1,
-                               ifelse(selection_data_Early_Late_Metastasis$stage == "Metastasis", 0.1 + distance1 + distance2,
+selection_data_Early_Late_Metastasis$stage_adjusted <- ifelse(selection_data_Early_Late_Metastasis$stage == "O → L", 0.1,
+                        ifelse(selection_data_Early_Late_Metastasis$stage == "L → H", 0.1 + distance1,
+                               ifelse(selection_data_Early_Late_Metastasis$stage == "H → M", 0.1 + distance1 + distance2,
                                              NA)))										 
   
 Figure_3_stage <- ggplot(selection_data_Early_Late_Metastasis, aes(x = stage_adjusted, y = si, color = stage, linetype = stage)) + 
     geom_point(size = 1.5) + 
 	geom_errorbar(aes(ymin = ci_low_95, ymax = ci_high_95), width = .5) +
     facet_wrap(~ factor(variant_name, levels = variant_order), scales = "free_y", ncol = 4) + 
-	theme_bw() + xlab("") + ylab("Cancer effect size") +
+	theme_bw() + xlab("") + ylab("Scaled selection coefficient") +
 	theme(legend.position = "bottom", legend.title = element_blank(), axis.text.x = element_blank(), legend.text = element_text(size = 12)) +
 	  scale_y_continuous(labels = scientific) +
 	  theme(text = element_text(size = 12)) +  
