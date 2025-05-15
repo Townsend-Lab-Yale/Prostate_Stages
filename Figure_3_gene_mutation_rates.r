@@ -144,7 +144,7 @@ mutrates_early_metastasis_plot <- ggplot()+
         axis.title = element_text(size=13),
         axis.text = element_text(size=10)) +
   xlab("Mutation rate in low-grade tumors") +
-  ylab("Mutation rate in metastases") +
+  ylab("Mutation rate in mCRPCs") +
   geom_smooth(method="lm", color="navyblue") + 
   geom_abline(slope=1, intercept=0, color = "darkred", linetype = "dashed") +
   scale_x_continuous(labels=scientific, limits=c(0,1.25e-6), breaks=c(0, 5e-7, 1e-6)) +
@@ -168,7 +168,7 @@ mutrates_late_metastasis_plot <- ggplot()+
         axis.title = element_text(size=13),
         axis.text = element_text(size=10)) +
   xlab("Mutation rate in high-grade tumors") +
-  ylab("Mutation rate in metastases") +
+  ylab("Mutation rate in mCRPCs") +
   geom_smooth(method="lm", color="navyblue") + 
   geom_abline(slope=1, intercept=0, color = "darkred", linetype = "dashed") +
   scale_x_continuous(labels=scientific, limits=c(0,1.25e-6), breaks=c(0, 5e-7, 1e-6)) +
@@ -216,7 +216,7 @@ mut_rate_metastasis <- data.frame(gene=cesa@mutrates$gene,
 
 mutrates_metastasis_plot <- ggplot() +
   geom_density(data=mut_rate_metastasis, size = 1, aes(color="lightcoral", x=mutation_rate_metastasis, y=..scaled..))+
-  xlab("Mutation rate in metastases") + ylab("Density") +
+  xlab("Mutation rate in mCRPCs") + ylab("Density") +
   theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(),
         panel.background = element_blank(), axis.line = element_line(color = "black"),
         legend.position="none",
@@ -306,7 +306,7 @@ mutrates_prim_met_plot <- ggplot()+
         axis.title = element_text(size=13),
         axis.text = element_text(size=10)) +
   xlab("Mutation rate in primary tumors") +
-  ylab("Mutation rate in metastases") +
+  ylab("Mutation rate in mCRPCs") +
   geom_smooth(method="lm", color="navyblue") +
   geom_abline(slope=1, intercept=0, color = "darkred", linetype = "dashed") +
   scale_x_continuous(labels=scientific, limits=c(0,1.25e-6), breaks=c(0, 5e-7, 1e-6)) + 
