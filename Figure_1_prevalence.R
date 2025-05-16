@@ -87,18 +87,18 @@ prevalence <- cesa@maf %>%
   inner_join(gleason, by = "Unique_Patient_Identifier")
 
 # Classify data into different Gleason grades
-lower_grade <- prevalence %>% filter(Gleason == "Early")
-higher_grade <- prevalence %>% filter(Gleason == "Late")
-metastasis <- prevalence %>% filter(Gleason == "Metastasis")
+low_grade <- prevalence %>% filter(Gleason == "Early")
+high_grade <- prevalence %>% filter(Gleason == "Late")
+mCRPC <- prevalence %>% filter(Gleason == "Metastasis")
 
 #Count the number of samples in each group:
-lower_grade_samples <- lower_grade %>%
+low_grade_samples <- low_grade %>%
   summarise(Unique_Count = n_distinct(Unique_Patient_Identifier))
 
-higher_grade_samples <- higher_grade %>%
+high_grade_samples <- high_grade %>%
   summarise(Unique_Count = n_distinct(Unique_Patient_Identifier))
 
-metastasis_samples <- metastasis %>%
+mCRPC_samples <- mCRPC %>%
   summarise(Unique_Count = n_distinct(Unique_Patient_Identifier))
 
 # Define genes of interest with correct order (Removed "MUC16")
@@ -106,50 +106,50 @@ genes_of_interest <- c("SPOP", "TP53", "KMT2C", "FOXA1", "PIK3CA", "ATM", "CTNNB
                        "KMT2D", "PTEN", "CUL3", "AR", "AKT1", "ROCK1", "PIK3CB", "APC", "RHOA")
 
 # Filter data for genes of interest
-filtered_lower_grade <- lower_grade %>%
+filtered_low_grade <- low_grade %>%
   filter(genes %in% genes_of_interest) %>%
   distinct(Unique_Patient_Identifier, genes)
 
-filtered_higher_grade <- higher_grade %>%
+filtered_high_grade <- high_grade %>%
   filter(genes %in% genes_of_interest) %>%
   distinct(Unique_Patient_Identifier, genes)
 
-filtered_metastasis <- metastasis %>%
+filtered_mCRPC <- mCRPC %>%
   filter(genes %in% genes_of_interest) %>%
   distinct(Unique_Patient_Identifier, genes)
 
 # Count unique patients per gene and normalize frequency
-lower_grade_gene_frequencies <- filtered_lower_grade %>%
+low_grade_gene_frequencies <- filtered_low_grade %>%
   group_by(genes) %>%
   summarise(Unique_Patient_Count = n(), .groups = "drop") %>%
-  mutate(Frequency_Percentage = (Unique_Patient_Count / 479) * 100, Category = "Lower Grade")
+  mutate(Frequency_Percentage = (Unique_Patient_Count / 479) * 100, Category = "Low-Grade")
 
-higher_grade_gene_frequencies <- filtered_higher_grade %>%
+high_grade_gene_frequencies <- filtered_high_grade %>%
   group_by(genes) %>%
   summarise(Unique_Patient_Count = n(), .groups = "drop") %>%
-  mutate(Frequency_Percentage = (Unique_Patient_Count / 406) * 100, Category = "Higher Grade")
+  mutate(Frequency_Percentage = (Unique_Patient_Count / 406) * 100, Category = "High-Grade")
 
-metastasis_gene_frequencies <- filtered_metastasis %>%
+mCRPC_gene_frequencies <- filtered_mCRPC %>%
   group_by(genes) %>%
   summarise(Unique_Patient_Count = n(), .groups = "drop") %>%
-  mutate(Frequency_Percentage = (Unique_Patient_Count / 1024) * 100, Category = "Metastasis")
+  mutate(Frequency_Percentage = (Unique_Patient_Count / 1024) * 100, Category = "mCRPC")
 
 # Combine datasets
-combined_gene_frequencies <- bind_rows(lower_grade_gene_frequencies,
-                                       higher_grade_gene_frequencies,
-                                       metastasis_gene_frequencies)
+combined_gene_frequencies <- bind_rows(low_grade_gene_frequencies,
+                                       high_grade_gene_frequencies,
+                                       mCRPC_gene_frequencies)
 
 # Convert Category to a factor for correct grouping
 combined_gene_frequencies$Category <- factor(combined_gene_frequencies$Category,
-                                             levels = c("Lower Grade", "Higher Grade", "Metastasis"))
+                                             levels = c("Low-Grade", "High-Grade", "mCRPC"))
 
 # Convert genes to a factor with the correct order 
 combined_gene_frequencies$genes <- factor(combined_gene_frequencies$genes, levels = genes_of_interest)
 
 # Define new distinct color scheme for each tumor stage
-stage_colors <- c("Lower Grade" = "#1b9e77",  # Green
-                  "Higher Grade" = "#d95f02",  # Orange
-                  "Metastasis" = "#7570b3")   # Blue
+stage_colors <- c("Low-Grade" = "#1b9e77",  # Green
+                  "High-Grade" = "#d95f02",  # Orange
+                  "mCRPC" = "#7570b3")   # Blue
 
 # Generate one-panel grouped bar chart
 ggplot(combined_gene_frequencies, aes(x = genes, y = Frequency_Percentage, fill = Category)) +
