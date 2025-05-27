@@ -76,9 +76,9 @@ library(ggplot2)
 library(scales)
 
 #defining groups:
-Early_groups <- cesa$samples[Gleason == "Early", unique(Unique_Patient_Identifier)]
-Late_groups <- cesa$samples[Gleason == "Late", unique(Unique_Patient_Identifier)]
-Metastasis_groups <- cesa$samples[Gleason == "Metastasis", unique(Unique_Patient_Identifier)]
+Early_groups <- cesa$samples[Gleason == "Early" & coverage == "exome", unique(Unique_Patient_Identifier)]
+Late_groups <- cesa$samples[Gleason == "Late" & coverage == "exome", unique(Unique_Patient_Identifier)]
+Metastasis_groups <- cesa$samples[Gleason == "Metastasis" & coverage == "exome", unique(Unique_Patient_Identifier)]
 
 #gene_mutation_rates_analysis:
 cesa <- gene_mutation_rates(cesa, covariates = "PRAD", samples = Early_groups)
@@ -87,7 +87,6 @@ cesa <- gene_mutation_rates(cesa, covariates = "PRAD", samples = Metastasis_grou
 
 threestage_final <- cesa
 saveRDS(threestage_final, file="threestage_final.rds")
-
 
 #groups:
 mut_rate_stageless <- data.frame(gene=cesa@mutrates$gene,
@@ -196,7 +195,6 @@ mutrates_early_plot <- ggplot() +
 mut_rate_late <- data.frame(gene=cesa@mutrates$gene,
                                  mutation_rate_late=cesa@mutrates$rate_grp_2)
 
-
 mutrates_late_plot <- ggplot() +
   geom_density(data=mut_rate_late, size = 1, aes(color="lightcoral", x=mutation_rate_late, y=..scaled..))+
   xlab("Mutation rate in high-grade tumors") + ylab("Density") +
@@ -213,7 +211,6 @@ mutrates_late_plot <- ggplot() +
 mut_rate_metastasis <- data.frame(gene=cesa@mutrates$gene,
                                  mutation_rate_metastasis=cesa@mutrates$rate_grp_3)
 
-
 mutrates_metastasis_plot <- ggplot() +
   geom_density(data=mut_rate_metastasis, size = 1, aes(color="lightcoral", x=mutation_rate_metastasis, y=..scaled..))+
   xlab("Mutation rate in mCRPCs") + ylab("Density") +
@@ -229,11 +226,14 @@ mutrates_metastasis_plot <- ggplot() +
 ##Fig_mut_rate_all
 mut_rate_all <- clear_gene_rates(cesa)
 
-mut_rate_all <- gene_mutation_rates(mut_rate_all, covariates = "PRAD")
+WES_groups <- mut_rate_all$samples[coverage == "exome", unique(Unique_Patient_Identifier)]
+
+#gene_mutation_rates_analysis:
+
+mut_rate_all <- gene_mutation_rates(mut_rate_all, covariates = "PRAD", samples = WES_groups)
 
 mut_rate_all_stageless <- data.frame(gene=mut_rate_all@mutrates$gene,
                                  mutation_rate_all_stageless=mut_rate_all@mutrates$rate_grp_1)
-
 
 mutrates_all_plot <- ggplot() +
   geom_density(data=mut_rate_all_stageless, size = 1, aes(color="lightcoral", x=mutation_rate_all_stageless, y=..scaled..))+
@@ -277,8 +277,8 @@ Pri_Met = trinuc_mutation_rates(Pri_Met, ces.refset.hg19$signatures$COSMIC_v3.2,
                                   signature_exclusions = signature_exclusions)
 
 #defining groups:
-Primary_groups <- Pri_Met$samples[Primary_Met == "Primary", unique(Unique_Patient_Identifier)]
-Metastasis_groups <- Pri_Met$samples[Primary_Met == "Metastasis", unique(Unique_Patient_Identifier)]
+Primary_groups <- Pri_Met$samples[Primary_Met == "Primary" & coverage == "exome", unique(Unique_Patient_Identifier)]
+Metastasis_groups <- Pri_Met$samples[Primary_Met == "Metastasis" & coverage == "exome", unique(Unique_Patient_Identifier)]
 
 #gene_mutation_rates_analysis:
 Pri_Met <- gene_mutation_rates(Pri_Met, covariates = "PRAD", samples = Primary_groups)
