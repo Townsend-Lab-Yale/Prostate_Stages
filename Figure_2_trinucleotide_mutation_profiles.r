@@ -4,6 +4,7 @@ library(ces.refset.hg19)
 library(MutationalPatterns)
 library(RColorBrewer)
 library(ggrepel)
+library(scales)
 
 setwd("C:/Moein/projects/prostate_stages/PRAD_files")
 
@@ -90,8 +91,13 @@ summed_snv_by_group <- as.matrix(summed_snv_by_group)
 colnames(summed_snv_by_group)[c(1, 2, 3)] <- c("mCRPC", "High-grade", "Low-grade")
 summed_snv_by_group <- summed_snv_by_group[, c("Low-grade", "High-grade", "mCRPC")]
 rownames(summed_snv_by_group) <- rownames(snv_counts)
-Figure_1 <- MutationalPatterns::plot_96_profile(summed_snv_by_group, ymax = 0.15)
-ggsave("Figure_1.png", width = 8, height = 6, dpi = 600)
+Figure_1 <- MutationalPatterns::plot_96_profile(summed_snv_by_group, ymax = 0.14)
+
+# Convert y-axis to percentage format
+Figure_1 <- Figure_1 +
+    scale_y_continuous(labels = percent_format(accuracy = 1), limits = c(0, 0.14)) +
+    ylab("Relative Contribution (%)")
+ggsave("Figure_1.png", plot = Figure_1, width = 8, height = 6, dpi = 600)
 
 #End
 
