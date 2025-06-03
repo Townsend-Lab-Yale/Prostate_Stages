@@ -303,7 +303,7 @@ Pri_Met <- load_maf(cesa = Pri_Met, maf = MAF7, maf_name = "468", coverage = "ta
                      covered_regions_name = "MSK_IMPACT_468", covered_regions_padding = 10)
 
 Pri_Met <- load_sample_data(Pri_Met, Primary_Met)
-##########################Moein
+
 #defining groups for gene mutation rate using exome:
 Primary_groups <- Pri_Met$samples[Primary_Met == "Primary" & coverage == "exome", unique(Unique_Patient_Identifier)]
 Metastasis_groups <- Pri_Met$samples[Primary_Met == "Metastasis" & coverage == "exome", unique(Unique_Patient_Identifier)]
@@ -348,22 +348,18 @@ Meta_rate <- mut_rate_df %>%
   select(gene, rate = Metastasis_mu) %>%
   data.table::setDT()
 
-
 # clear the gene rates in the cesa object 
 Pri_Met <- clear_gene_rates(cesa = Pri_Met)
-
 
 # setting gene rates for Early, Late and Metastasis:
 Pri_Met <- set_gene_rates(cesa = Pri_Met, rates = Primary_rate, missing_genes_take_nearest = T, samples = Pri_Met$samples[Primary_Met == "Primary"]) 
 Pri_Met <- set_gene_rates(cesa = Pri_Met, rates = Meta_rate, missing_genes_take_nearest = T, samples = Pri_Met$samples[Primary_Met == "Metastasis"]) 
-
 
 # infer trinculeotide-context-specific relative rates of SNV mutation from a mutational signature analysis
 signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
 
 # estimating trinucleotide mutation rates
 Pri_Met  <- trinuc_mutation_rates(cesa = Pri_Met, signature_set = "COSMIC_v3.2", signature_exclusions = signature_exclusions)
-##########################Moein
 
 twostage_final <- Pri_Met
 saveRDS(twostage_final, file="twostage_final.rds")
@@ -396,7 +392,6 @@ mutrates_prim_met_plot <- ggplot()+
 ####Fig_mut_rate_primary
 mut_rate_primary <- data.frame(gene=twostage_final@mutrates$gene,
                                  mutation_rate_primary=twostage_final@mutrates$rate_grp_1)
-
 
 mutrates_primary_plot <- ggplot() +
   geom_density(data=mut_rate_primary, size = 1, aes(color="lightcoral", x=mutation_rate_primary, y=..scaled..))+
