@@ -70,7 +70,6 @@ cesa <- load_maf(cesa = cesa, maf = MAF7, maf_name = "468", coverage = "targeted
 
 cesa <- load_sample_data(cesa, gleason)
 
-##########################Moein
 #Defining group
 Early_groups_all <- cesa$samples[Gleason == "Early", unique(Unique_Patient_Identifier)]
 Late_groups_all <- cesa$samples[Gleason == "Late", unique(Unique_Patient_Identifier)]
@@ -141,15 +140,8 @@ signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD"
 # estimating trinucleotide mutation rates
 cesa_samples_by_groups <- trinuc_mutation_rates(cesa = cesa_samples_by_groups, signature_set = "COSMIC_v3.2", signature_exclusions = signature_exclusions)
 
-
-#######################################Moein
-
-
-
-
 threestage_final <- cesa_samples_by_groups
 saveRDS(threestage_final, file="threestage_final.rds")
-
 
 #groups:
 mut_rate_stageless <- data.frame(gene=cesa_samples_by_groups@mutrates$gene,
@@ -185,8 +177,8 @@ mutrates_early_late_plot <- ggplot()+
   ylab("Mutation rate in high-grade tumors") +
   geom_smooth(method="lm", color="navyblue") + 
   geom_abline(slope=1, intercept=0, color = "darkred", linetype = "dashed") +
-  scale_x_continuous(labels=scientific, limits=c(0,1.25e-6), breaks=c(0, 5e-7, 1e-6)) +
-  scale_y_continuous(labels=scientific, breaks=c(0, 5e-7, 1e-6))
+  scale_x_continuous(labels=scientific, limits=c(0,1.25e-6), breaks=c(5e-7, 1e-6), expand = c(0, 0)) +
+  scale_y_continuous(labels=scientific, breaks=c(0, 5e-7, 1e-6), expand = c(0, 0))
 
 ###Figure_early_met:
 mut_rate_earlymet <- data.frame(gene=threestage_final@mutrates$gene,
@@ -209,8 +201,8 @@ mutrates_early_metastasis_plot <- ggplot()+
   ylab("Mutation rate in mCRPCs") +
   geom_smooth(method="lm", color="navyblue") + 
   geom_abline(slope=1, intercept=0, color = "darkred", linetype = "dashed") +
-  scale_x_continuous(labels=scientific, limits=c(0,1.25e-6), breaks=c(0, 5e-7, 1e-6)) +
-  scale_y_continuous(labels=scientific, breaks=c(0, 5e-7, 1e-6))
+  scale_x_continuous(labels=scientific, limits=c(0,1.25e-6), breaks=c(5e-7, 1e-6), expand = c(0, 0)) +
+  scale_y_continuous(labels=scientific, breaks=c(0, 5e-7, 1e-6), expand = c(0, 0))
 
 ###Figure_late_met:
 mut_rate_latemet <- data.frame(gene=threestage_final@mutrates$gene,
@@ -233,8 +225,8 @@ mutrates_late_metastasis_plot <- ggplot()+
   ylab("Mutation rate in mCRPCs") +
   geom_smooth(method="lm", color="navyblue") + 
   geom_abline(slope=1, intercept=0, color = "darkred", linetype = "dashed") +
-  scale_x_continuous(labels=scientific, limits=c(0,1.25e-6), breaks=c(0, 5e-7, 1e-6)) +
-  scale_y_continuous(labels=scientific, breaks=c(0, 5e-7, 1e-6))
+  scale_x_continuous(labels=scientific, limits=c(0,1.25e-6), breaks=c(5e-7, 1e-6), expand = c(0, 0)) +
+  scale_y_continuous(labels=scientific, breaks=c(0, 5e-7, 1e-6), expand = c(0, 0))
 
 ### Figure_separate_tumors:
 ##Fig_mut_rate_early
@@ -251,8 +243,8 @@ mutrates_early_plot <- ggplot() +
         axis.title = element_text(size=13),
         axis.text = element_text(size=10)) +
   theme(plot.margin = margin(0,0,0,26, "pt")) +
-  scale_x_continuous(labels=scientific, limits=c(0, 1.25e-6), breaks=c(0, 5e-7, 1e-6))+
-  scale_y_continuous(expand = c(0,0), limits = c(0, 1.05), breaks=c(0,0.5,1))
+  scale_x_continuous(labels=scientific, limits=c(0, 1.25e-6), breaks=c(5e-7, 1e-6), expand = c(0, 0))+
+  scale_y_continuous(limits = c(0, 1.05), breaks=c(0,0.5,1), expand = c(0, 0))
 
 ##Fig_mut_rate_late
 mut_rate_late <- data.frame(gene=cesa_samples_by_groups@mutrates$gene,
@@ -268,8 +260,8 @@ mutrates_late_plot <- ggplot() +
         axis.title = element_text(size=13),
         axis.text = element_text(size=10)) +
   theme(plot.margin = margin(0,0,0,26, "pt")) +
-  scale_x_continuous(labels=scientific, limits=c(0, 1.25e-6), breaks=c(0, 5e-7, 1e-6))+
-  scale_y_continuous(expand = c(0,0), limits = c(0, 1.05), breaks=c(0,0.5,1))
+  scale_x_continuous(labels=scientific, limits=c(0, 1.25e-6), breaks=c(5e-7, 1e-6), expand = c(0, 0))+
+  scale_y_continuous(limits = c(0, 1.05), breaks=c(0,0.5,1), expand = c(0, 0))
  
 ##Fig_mut_rate_metastasis
 mut_rate_metastasis <- data.frame(gene=cesa_samples_by_groups@mutrates$gene,
@@ -285,8 +277,8 @@ mutrates_metastasis_plot <- ggplot() +
         axis.title = element_text(size=13),
         axis.text = element_text(size=10)) +
   theme(plot.margin = margin(0,0,0,26, "pt")) +
-  scale_x_continuous(labels=scientific, limits=c(0, 1.25e-6), breaks=c(0, 5e-7, 1e-6))+
-  scale_y_continuous(expand = c(0,0), limits = c(0, 1.05), breaks=c(0,0.5,1))
+  scale_x_continuous(labels=scientific, limits=c(0, 1.25e-6), breaks=c(5e-7, 1e-6), expand = c(0, 0))+
+  scale_y_continuous(limits = c(0, 1.05), breaks=c(0,0.5,1), expand = c(0, 0))
  
 
 ###Primary_Metastasis:
@@ -398,8 +390,8 @@ mutrates_prim_met_plot <- ggplot()+
   ylab("Mutation rate in mCRPCs") +
   geom_smooth(method="lm", color="navyblue") +
   geom_abline(slope=1, intercept=0, color = "darkred", linetype = "dashed") +
-  scale_x_continuous(labels=scientific, limits=c(0,1.25e-6), breaks=c(0, 5e-7, 1e-6)) + 
-  scale_y_continuous(labels=scientific, breaks=c(0, 5e-7, 1e-6))
+  scale_x_continuous(labels=scientific, limits=c(0,1.25e-6), breaks=c(5e-7, 1e-6), expand = c(0, 0)) + 
+  scale_y_continuous(labels=scientific, breaks=c(0, 5e-7, 1e-6), expand = c(0, 0))
 
 ####Fig_mut_rate_primary
 mut_rate_primary <- data.frame(gene=twostage_final@mutrates$gene,
@@ -415,8 +407,8 @@ mutrates_primary_plot <- ggplot() +
         axis.title = element_text(size=13),
         axis.text = element_text(size=10)) +
   theme(plot.margin = margin(0,0,0,26, "pt")) +
-  scale_x_continuous(labels=scientific, limits=c(0, 1.25e-6), breaks=c(0, 5e-7, 1e-6))+
-  scale_y_continuous(expand = c(0,0), limits = c(0, 1.05), breaks=c(0,0.5,1))
+  scale_x_continuous(labels=scientific, limits=c(0, 1.25e-6), breaks=c(5e-7, 1e-6), expand = c(0, 0))+
+  scale_y_continuous(limits = c(0, 1.05), breaks=c(0,0.5,1), expand = c(0, 0))
   
 ###Combine_Figures    
 library(cowplot)
