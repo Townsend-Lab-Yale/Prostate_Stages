@@ -244,7 +244,7 @@ mutrates_early_plot <- ggplot() +
         axis.text = element_text(size=10)) +
   theme(plot.margin = margin(0,0,0,26, "pt")) +
   scale_x_continuous(labels=scientific, limits=c(0, 1.25e-6), breaks=c(5e-7, 1e-6), expand = c(0, 0))+
-  scale_y_continuous(limits = c(0, 1.05), breaks=c(0,0.5,1), expand = c(0, 0))
+  scale_y_continuous(limits = c(0, 1.05), breaks=c(0,0.2,0.4,0.6,0.8,1), expand = c(0, 0))
 
 ##Fig_mut_rate_late
 mut_rate_late <- data.frame(gene=cesa_samples_by_groups@mutrates$gene,
@@ -261,7 +261,7 @@ mutrates_late_plot <- ggplot() +
         axis.text = element_text(size=10)) +
   theme(plot.margin = margin(0,0,0,26, "pt")) +
   scale_x_continuous(labels=scientific, limits=c(0, 1.25e-6), breaks=c(5e-7, 1e-6), expand = c(0, 0))+
-  scale_y_continuous(limits = c(0, 1.05), breaks=c(0,0.5,1), expand = c(0, 0))
+  scale_y_continuous(limits = c(0, 1.05), breaks=c(0,0.2,0.4,0.6,0.8,1), expand = c(0, 0))
  
 ##Fig_mut_rate_metastasis
 mut_rate_metastasis <- data.frame(gene=cesa_samples_by_groups@mutrates$gene,
@@ -278,7 +278,7 @@ mutrates_metastasis_plot <- ggplot() +
         axis.text = element_text(size=10)) +
   theme(plot.margin = margin(0,0,0,26, "pt")) +
   scale_x_continuous(labels=scientific, limits=c(0, 1.25e-6), breaks=c(5e-7, 1e-6), expand = c(0, 0))+
-  scale_y_continuous(limits = c(0, 1.05), breaks=c(0,0.5,1), expand = c(0, 0))
+  scale_y_continuous(limits = c(0, 1.05), breaks=c(0,0.2,0.4,0.6,0.8,1), expand = c(0, 0))
  
 
 ###Primary_Metastasis:
@@ -403,7 +403,7 @@ mutrates_primary_plot <- ggplot() +
         axis.text = element_text(size=10)) +
   theme(plot.margin = margin(0,0,0,26, "pt")) +
   scale_x_continuous(labels=scientific, limits=c(0, 1.25e-6), breaks=c(5e-7, 1e-6), expand = c(0, 0))+
-  scale_y_continuous(limits = c(0, 1.05), breaks=c(0,0.5,1), expand = c(0, 0))
+  scale_y_continuous(limits = c(0, 1.05), breaks=c(0,0.2,0.4,0.6,0.8,1), expand = c(0, 0))
   
 ###Combine_Figures    
 library(cowplot)
