@@ -319,20 +319,30 @@ combined_selection$stage_adjusted <- ifelse(combined_selection$stage == "O → L
                                ifelse(combined_selection$stage == "L → M", 0.1 + distance1 + distance2,
                                       ifelse(combined_selection$stage == "H → M", 0.1 + distance1 + distance3,
                                              NA))))										 
-  
+
 Figure_3 <- ggplot(combined_selection, aes(x = stage_adjusted, y = si, color = stage, linetype = stage)) + 
     geom_point(size = 1.5) + 
-	geom_errorbar(aes(ymin = ci_low_95, ymax = ci_high_95), width = .5) +
+    geom_errorbar(aes(ymin = ci_low_95, ymax = ci_high_95), width = 0.5) +
     facet_wrap(~ factor(variant_name, levels = variant_order), scales = "free_y", ncol = 4) + 
-	theme_bw() + xlab("") + ylab("Scaled selection coefficient") +
-	theme(legend.position = "bottom", legend.title = element_blank(), axis.text.x = element_blank(), legend.text = element_text(size = 11.8), axis.title.y = element_text(size = 16)) +
-	  scale_y_continuous(labels = comma) +
-	  theme(text = element_text(size = 12)) +  
-	  expand_limits(y = 0) +
-	  scale_linetype_manual(values = c(rep("solid", 1), rep("solid", 1), rep("twodash", 1), rep("twodash", 1))) +
-	  scale_color_manual(values = c("red", "blue", "red", "blue")) +
-	  scale_x_continuous(breaks = combined_selection$stage_adjusted, labels = combined_selection$stage)
- 
-ggsave("Figure_3.png", plot = Figure_3, width = 8, height = 10)
+    theme_bw() + 
+    xlab("") + 
+    ylab("Scaled selection coefficient") +
+    theme(
+        legend.position = "bottom", 
+        legend.title = element_blank(), 
+        axis.text.x = element_blank(), 
+        legend.text = element_text(size = 11.8), 
+        axis.title.y = element_text(size = 16),
+        text = element_text(size = 12),
+        panel.grid.major.x = element_blank(),  
+        panel.grid.minor.x = element_blank()   
+    ) +
+    scale_y_continuous(labels = comma) +
+    expand_limits(y = 0) +
+    scale_linetype_manual(values = c(rep("solid", 1), rep("solid", 1), rep("twodash", 1), rep("twodash", 1))) +
+    scale_color_manual(values = c("red", "blue", "red", "blue")) +
+    scale_x_continuous(breaks = combined_selection$stage_adjusted, labels = combined_selection$stage)
+
+ ggsave("Figure_3.png", plot = Figure_3, width = 8, height = 10)
 
 #End
