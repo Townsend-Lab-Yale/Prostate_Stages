@@ -151,7 +151,7 @@ waterfall_SPOP <- ggplot(epistatic_change_SPOP, aes(x = gene, y = change, fill =
   theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1), axis.text.y = element_text(size = 8), axis.line.x = element_blank(), axis.title.y = element_text(size = 12)) +
   xlab("Gene") + ylab("Epistatic change in selection") +
   scale_x_discrete(labels = gene_labels_SPOP) +
-  scale_y_continuous(labels = scientific, limits = c(-4e4, 8e4), breaks = c(-4e4, -2e4, 0, 2e4, 4e4, 8e4)) +
+  scale_y_continuous(labels = scientific, limits = c(-4e4, 8e4), breaks = c(-4e4, -2e4, 0, 2e4, 4e4, 6e4, 8e4)) +
   geom_hline(yintercept = 0)
 
 waterfall_SPOP
@@ -213,7 +213,7 @@ waterfall_PIK3CA <- ggplot(epistatic_change_PIK3CA, aes(x = gene, y = change, fi
   theme(axis.text.x = element_text(size = 8, angle = 90, vjust = 0.5, hjust = 1), axis.text.y = element_text(size = 8), axis.line.x = element_blank(), axis.title.y = element_text(size = 12)) +
   xlab("Gene") + ylab("Epistatic change in selection") +
   scale_x_discrete(labels = gene_labels_PIK3CA) +
-  scale_y_continuous(labels = scientific, limits = c(-4e4, 5e4), breaks = c(-4e4, -2e4, 0, 2e4, 4e4, 5e4)) +
+  scale_y_continuous(labels = scientific, limits = c(-4e4, 5e4), breaks = c(-4e4, -3e4, -2e4, -1e4, 0, 1e4, 2e4, 3e4, 4e4, 5e4)) +
   geom_hline(yintercept = 0)
 
   
@@ -333,7 +333,7 @@ waterfall_AR <- ggplot(epistatic_change_AR, aes(x = gene, y = change, fill = tim
   xlab("Gene") + ylab("Epistatic change in selection") +
   scale_x_discrete(labels = gene_labels_AR) +
   scale_y_continuous(labels = scientific, limits = c(-5e4, 8e4), 
-                     breaks = c(-4e4, -2e4, 0, 2e4, 4e4, 8e4)) +
+                     breaks = c(-4e4, -2e4, 0, 2e4, 4e4, 6e4, 8e4)) +
   geom_hline(yintercept = 0)
 
 waterfall_AR
