@@ -178,7 +178,7 @@ mutrates_early_late_plot <- ggplot()+
   geom_smooth(method="lm", color="navyblue") + 
   geom_abline(slope=1, intercept=0, color = "darkred", linetype = "dashed") +
   scale_x_continuous(labels=scientific, limits=c(0,1.25e-6), breaks=c(5e-7, 1e-6), expand = c(0, 0)) +
-  scale_y_continuous(labels=scientific, breaks=c(0, 5e-7, 1e-6), expand = c(0, 0))
+  scale_y_continuous(labels=scientific, breaks=c(0, 5e-7, 1e-6, 2e-6, 3e-6, 4e-6), expand = c(0, 0))
 
 ###Figure_early_met:
 mut_rate_earlymet <- data.frame(gene=threestage_final@mutrates$gene,
@@ -202,7 +202,7 @@ mutrates_early_metastasis_plot <- ggplot()+
   geom_smooth(method="lm", color="navyblue") + 
   geom_abline(slope=1, intercept=0, color = "darkred", linetype = "dashed") +
   scale_x_continuous(labels=scientific, limits=c(0,1.25e-6), breaks=c(5e-7, 1e-6), expand = c(0, 0)) +
-  scale_y_continuous(labels=scientific, breaks=c(0, 5e-7, 1e-6), expand = c(0, 0))
+  scale_y_continuous(labels=scientific, breaks=c(0, 5e-7, 1e-6, 2e-6, 3e-6, 4e-6), expand = c(0, 0))
 
 ###Figure_late_met:
 mut_rate_latemet <- data.frame(gene=threestage_final@mutrates$gene,
@@ -226,7 +226,7 @@ mutrates_late_metastasis_plot <- ggplot()+
   geom_smooth(method="lm", color="navyblue") + 
   geom_abline(slope=1, intercept=0, color = "darkred", linetype = "dashed") +
   scale_x_continuous(labels=scientific, limits=c(0,1.25e-6), breaks=c(5e-7, 1e-6), expand = c(0, 0)) +
-  scale_y_continuous(labels=scientific, breaks=c(0, 5e-7, 1e-6), expand = c(0, 0))
+  scale_y_continuous(labels=scientific, breaks=c(0, 5e-7, 1e-6, 2e-6, 3e-6, 4e-6), expand = c(0, 0))
 
 ### Figure_separate_tumors:
 ##Fig_mut_rate_early
@@ -387,7 +387,7 @@ mutrates_prim_met_plot <- ggplot()+
   geom_smooth(method="lm", color="navyblue") +
   geom_abline(slope=1, intercept=0, color = "darkred", linetype = "dashed") +
   scale_x_continuous(labels=scientific, limits=c(0,1.25e-6), breaks=c(5e-7, 1e-6), expand = c(0, 0)) + 
-  scale_y_continuous(labels=scientific, breaks=c(0, 5e-7, 1e-6), expand = c(0, 0))
+  scale_y_continuous(labels=scientific, breaks=c(0, 5e-7, 1e-6, 2e-6, 3e-6, 4e-6), expand = c(0, 0))
 
 ####Fig_mut_rate_primary
 mut_rate_primary <- data.frame(gene=twostage_final@mutrates$gene,
