@@ -123,7 +123,7 @@ bargraph_SPOP_SI <- ggplot(data=PRAD_results_recurrent, aes(x=reorder(variant_na
   geom_bar(stat="identity") +
   geom_errorbar(aes(ymin=ci_low_95, ymax=ci_high_95), width=0.333) +
   theme(axis.text.x = element_text (hjust = 1, angle = 45)) +
-  xlab("SPOP amino acid substitution (and prevalence)") + ylab("Scaled selection coefficient") +
+  xlab("SPOP amino-acid substitution (and observed count)") + ylab("Scaled selection coefficient") +
   scale_fill_gradient(low="gold", high="red2") +
   theme(legend.position = "none")+
   theme(panel.background = element_blank()) +
