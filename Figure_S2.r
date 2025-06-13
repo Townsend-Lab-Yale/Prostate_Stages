@@ -7,12 +7,9 @@ library(ggplot2)
 library(reshape2)
 library(cowplot)
 
-
 setwd("C:/Moein/projects/prostate_stages/PRAD_files")
 
-
-###Preparing data
-
+### Preparing data
 gleason <- read.delim("C:/Moein/projects/prostate_stages/PRAD_files/gleason.txt")
 
 MAF1 <- preload_maf(maf = "armenia_final.maf.txt", refset = ces.refset.hg19)
@@ -50,7 +47,7 @@ MAF5 <- MAF5[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
 MAF6 <- MAF6[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
 MAF7 <- MAF7[(repetitive_region == F | cosmic_site_tier %in% 1:3)]
 
-##Create CESAnalysis and load data:
+# Create CESAnalysis and load data:
 cesa <- CESAnalysis(refset = "ces.refset.hg19")
 cesa <- load_maf(cesa = cesa, maf = MAF1, maf_name = "armenia")
 cesa <- load_maf(cesa = cesa, maf = MAF2, maf_name = "boutros", coverage = "genome")
@@ -68,10 +65,9 @@ cesa <- load_maf(cesa = cesa, maf = MAF7, maf_name = "468", coverage = "targeted
                      covered_regions = "msk_468_exons.bed", 
                      covered_regions_name = "MSK_IMPACT_468", covered_regions_padding = 10)
 
-
 cesa <- load_sample_data(cesa, gleason)
 
-##Mutational processes and relative mutation rates:
+# Mutational processes and relative mutation rates:
 signature_exclusions = suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
 
 cesa = trinuc_mutation_rates(cesa, ces.refset.hg19$signatures$COSMIC_v3.2,
