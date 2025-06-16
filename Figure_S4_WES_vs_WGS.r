@@ -5,9 +5,6 @@ library(MutationalPatterns)
 library(RColorBrewer)
 library(ggrepel)
 
-
-setwd("C:/Moein/projects/prostate_stages/PRAD_files")
-
 ###Preparing data
 
 gleason <- read.delim("C:/Moein/projects/prostate_stages/PRAD_files/gleason.txt")
