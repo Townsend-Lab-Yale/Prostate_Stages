@@ -7,9 +7,6 @@ library(ggrepel)
 library(ggplot2)
 library(scales)
 
-
-setwd("C:/Moein/projects/prostate_stages/PRAD_files")
-
 ###Preparing data
 
 gleason <- read.delim("C:/Moein/projects/prostate_stages/PRAD_files/gleason.txt")
