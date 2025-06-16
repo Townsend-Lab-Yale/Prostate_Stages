@@ -6,7 +6,6 @@ library(scales)
 library(stringr)
 library(ggplot2)
 
-setwd("C:/Moein/projects/prostate_stages/PRAD_files")
 ###Figure_4_SPOP
 
 ###Preparing data
