@@ -6,8 +6,6 @@ library(RColorBrewer)
 library(ggrepel)
 library(scales)
 
-setwd("C:/Moein/projects/prostate_stages/PRAD_files")
-
 ###Preparing data
 
 gleason <- read.delim("C:/Moein/projects/prostate_stages/PRAD_files/gleason.txt")
