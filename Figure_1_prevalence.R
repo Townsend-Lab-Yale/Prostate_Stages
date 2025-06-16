@@ -10,9 +10,6 @@ library(ggplot2)
 library(tidyr)
 library(ggpubr)  
 
-# Set working directory
-setwd("C:/Moein/projects/prostate_stages/PRAD_files")
-
 ###Preparing data
 
 gleason <- read.delim("C:/Moein/projects/prostate_stages/PRAD_files/gleason.txt")
