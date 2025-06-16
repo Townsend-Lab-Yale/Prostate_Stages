@@ -7,7 +7,6 @@ library(ggplot2)
 library(reshape2)
 library(cowplot)
 
-setwd("C:/Moein/projects/prostate_stages/PRAD_files")
 
 ### Preparing data
 gleason <- read.delim("C:/Moein/projects/prostate_stages/PRAD_files/gleason.txt")
