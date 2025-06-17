@@ -303,6 +303,19 @@ variant_order <- c("SPOP", "AKT1", "KMT2D", "CTNNB1", "CUL3", "PIK3CA", "TP53", 
 stage_order <- c("O → L", "O → H", "L → M", "H → M")
 combined_selection$stage <- factor(combined_selection$stage, levels = stage_order)
 
+# Create named vector of italic labels
+variant_labels <- setNames(
+  paste0("italic('", variant_order, "')"),
+  variant_order
+)
+
+# Apply to data
+combined_selection <- combined_selection %>%
+  mutate(
+    variant_label = variant_labels[variant_name],
+    variant_label = factor(variant_label, levels = variant_labels)  # ordered!
+  )
+                    
 library(scales)
 library(stringr)
 library(dplyr)
@@ -321,7 +334,7 @@ combined_selection$stage_adjusted <- ifelse(combined_selection$stage == "O → L
 Figure_3 <- ggplot(combined_selection, aes(x = stage_adjusted, y = si, color = stage, linetype = stage)) + 
     geom_point(size = 1.5) + 
     geom_errorbar(aes(ymin = ci_low_95, ymax = ci_high_95), width = 0.5) +
-    facet_wrap(~ factor(variant_name, levels = variant_order), scales = "free_y", ncol = 4) + 
+    facet_wrap(~ variant_label, scales = "free_y", ncol = 4, labeller = label_parsed) + 
     theme_bw() + 
     xlab("") + 
     ylab("Scaled selection coefficient") +
