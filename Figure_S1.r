@@ -5,8 +5,6 @@ library(MutationalPatterns)
 library(RColorBrewer)
 library(ggrepel)
 
-setwd("C:/Moein/projects/prostate_stages/Age_comparison_3bp_motifs")
-
 ###Preparing data
 gleason <- read.delim("C:/Moein/projects/prostate_stages/Age_comparison_3bp_motifs/gleason_age_comparison.txt")
 
@@ -52,5 +50,6 @@ Figure_S1 <- MutationalPatterns::plot_96_profile(summed_snv_by_group, ymax = 0.1
 ggsave("Figure_S1.png", width = 8, height = 6, dpi = 600)
 
 #End
+
 
 
