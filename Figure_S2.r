@@ -166,4 +166,5 @@ combined_plot <- plot_grid(p_low, p_high, p_mcrpc,
                            ncol = 1, label_fontface = "bold")
 
 # Save plot
-ggsave("Supplementary_Figure_S2.png", combined_plot, width = 6, height = 9, dpi = 300, bg = "white")
+ggsave("Figure_S2.png", combined_plot, width = 6, height = 9, dpi = 300, bg = "white")
+
