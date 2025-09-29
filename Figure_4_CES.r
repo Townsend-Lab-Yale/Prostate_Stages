@@ -313,7 +313,7 @@ variant_labels <- setNames(
 combined_selection <- combined_selection %>%
   mutate(
     variant_label = variant_labels[variant_name],
-    variant_label = factor(variant_label, levels = variant_labels)  # ordered!
+    variant_label = factor(variant_label, levels = variant_labels)  
   )
                     
 library(scales)
@@ -331,7 +331,7 @@ combined_selection$stage_adjusted <- ifelse(combined_selection$stage == "O → L
                                       ifelse(combined_selection$stage == "H → M", 0.1 + distance1 + distance3,
                                              NA))))										 
 
-Figure_3 <- ggplot(combined_selection, aes(x = stage_adjusted, y = si, color = stage, linetype = stage)) + 
+Figure_4 <- ggplot(combined_selection, aes(x = stage_adjusted, y = si, color = stage, linetype = stage)) + 
     geom_point(size = 1.5) + 
     geom_errorbar(aes(ymin = ci_low_95, ymax = ci_high_95), width = 0.5) +
     facet_wrap(~ variant_label, scales = "free_y", ncol = 4, labeller = label_parsed) + 
@@ -354,6 +354,7 @@ Figure_3 <- ggplot(combined_selection, aes(x = stage_adjusted, y = si, color = s
     scale_color_manual(values = c("red", "blue", "red", "blue")) +
     scale_x_continuous(breaks = combined_selection$stage_adjusted, labels = combined_selection$stage)
 
- ggsave("Figure_3.png", plot = Figure_3, width = 8, height = 10)
+ ggsave("Figure_4.png", plot = Figure_4, width = 8, height = 10)
 
 #End
+
