@@ -165,6 +165,7 @@ ggplot(combined_gene_frequencies, aes(x = genes, y = Frequency_Percentage, fill 
   )
 
 # Save high-resolution figures
-ggsave("Gene_Mutation_Frequency_Grouped_all.png", width = 12, height = 6, dpi = 600)
-ggsave("Gene_Mutation_Frequency_Grouped_all.tiff", width = 12, height = 6, dpi = 600, compression = "lzw")
-ggsave("Gene_Mutation_Frequency_Grouped_all.pdf", width = 12, height = 6)
+ggsave("Figure_1.png", width = 12, height = 6, dpi = 600)
+
+#End
+
