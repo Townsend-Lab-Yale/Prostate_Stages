@@ -123,13 +123,11 @@ bargraph_AR_SI <- ggplot(data=PRAD_results_recurrent, aes(x=reorder(variant_name
   theme(panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) +
   theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank()) +
   geom_text(aes(label=included_with_variant, y=-5000), size = common.text.size) +
-  scale_y_continuous(labels=scientific, breaks = c(0, 1e4, 2e4, 3e4, 4e4, 5e4))
-
+  scale_y_continuous(labels=scientific, breaks = c(0, 2e4, 4e4, 6e4, 8e4))
 
 setwd("C:/Moein/projects/prostate_stages/PRAD_files/PRAD_figures/Figures")
 
 ggsave("AR_recurrent_SI.png", width=8, height=5.25)
-
 
 ###Overlay SPOP_labeled_2.png onto AR_recurrent_SI.png:
 
@@ -154,9 +152,9 @@ offset_y <- 0
 # Overlay image2 onto image1
 merged_image <- image_composite(image1, image2, offset = paste0("+", offset_x, "+", offset_y))
 
-
 # Write the merged image to a file
 image_write(merged_image, "Figure_6_AR.png")
 
 
 #End
+
