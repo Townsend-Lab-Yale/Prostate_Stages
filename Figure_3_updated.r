@@ -416,7 +416,8 @@ combined_gene_mutrate <- plot_grid(
   rel_heights = c(1, 1, 1)
 )
 
-ggsave("combined_gene_mutrate.png", width = 8, dpi=600, height = 10)
+ggsave("Figure_3.png", width = 8, dpi=600, height = 10)
 
 
 #End
+
