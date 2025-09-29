@@ -69,9 +69,7 @@ cesa <- load_maf(cesa = cesa, maf = MAF7, maf_name = "468", coverage = "targeted
                      covered_regions = "msk_468_exons.bed", 
                      covered_regions_name = "MSK_IMPACT_468", covered_regions_padding = 10)
 
-
 cesa <- load_sample_data(cesa, gleason)
-
 
 # infer trinculeotide-context-specific relative rates of SNV mutation from a mutational signature analysis
 signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
@@ -84,7 +82,6 @@ cesa <- gene_mutation_rates(cesa, covariates = "PRAD", save_all_dndscv_output = 
 
 selected_genes <- c("SPOP", "FOXA1", "AR", "PIK3CA", "PIK3CB", "TP53", "ROCK1", "RHOA", "AKT1", "ATM", "CUL3",
                     "APC", "CTNNB1", "PTEN", "KMT2C", "KMT2D")
-
 
 consensus_gr = Reduce(GenomicRanges::intersect, unlist(cesa$coverage_ranges[c('exome', 'targeted')]))
 recurrent_cons_cvg = select_variants(cesa, gr = consensus_gr)[maf_prevalence > 1]
@@ -133,11 +130,9 @@ significant_epistasis_filtered <- fisher_results %>%
       (p_epistasis < 0.05 | p_A_change < 0.05 | p_B_change < 0.05 | p_value < 0.05)
   )
 
-
 scientific <- function(x){
   ifelse(x==0, "0", parse(text=gsub("[+]", "", gsub("e", " %*% 10^", label_scientific()(x)))))
 }
-
 
 ###SPOP###
 
@@ -514,16 +509,12 @@ waterfall_AR <- ggplot(epistatic_change_AR, aes(x = gene, y = change, fill = tim
 # Save plot
 ggsave("PRAD_figures/epistasis_16/waterfall_AR.png", width = 10, dpi = 300, height = 7)
 
-###############################################
-
 combined_waterfall <- plot_grid(waterfall_SPOP, waterfall_PIK3CA, waterfall_TP53, waterfall_AR,
                                 labels = c("A", "B", "C", "D"), ncol = 2)
-
 
 pdf("combined_waterfall_with_legends.pdf", width = 12, height = 8)
 grid.newpage()
 print(combined_waterfall, vp = viewport())
-
 
 # SPOP
 grid.rect(x = unit(0.125, "npc"), y = unit(0.96, "npc"), width = unit(0.018, "npc"), height = unit(0.028, "npc"), gp = gpar(fill = "#F8766D", col = NA))
@@ -572,4 +563,5 @@ grid.text(expression(italic("AR")*" is mutated"), x = unit(0.84, "npc"), y = uni
 dev.off()
 
 #End
+
 
