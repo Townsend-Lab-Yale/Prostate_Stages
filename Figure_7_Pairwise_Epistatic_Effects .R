@@ -512,7 +512,7 @@ ggsave("PRAD_figures/epistasis_16/waterfall_AR.png", width = 10, dpi = 300, heig
 combined_waterfall <- plot_grid(waterfall_SPOP, waterfall_PIK3CA, waterfall_TP53, waterfall_AR,
                                 labels = c("A", "B", "C", "D"), ncol = 2)
 
-pdf("combined_waterfall_with_legends.pdf", width = 12, height = 8)
+pdf("Figure_7.pdf", width = 12, height = 8)
 grid.newpage()
 print(combined_waterfall, vp = viewport())
 
@@ -563,5 +563,3 @@ grid.text(expression(italic("AR")*" is mutated"), x = unit(0.84, "npc"), y = uni
 dev.off()
 
 #End
-
-
