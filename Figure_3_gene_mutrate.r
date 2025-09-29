@@ -405,7 +405,7 @@ mutrates_primary_plot <- ggplot() +
 ###Combine_Figures    
 library(cowplot)
 
-combined_gene_mutrate <- plot_grid(
+Figure_3 <- plot_grid(
   mutrates_early_plot, mutrates_early_metastasis_plot,
   mutrates_late_plot, mutrates_late_metastasis_plot,
   mutrates_metastasis_plot, mutrates_prim_met_plot,
@@ -420,4 +420,5 @@ ggsave("Figure_3.png", width = 8, dpi=600, height = 10)
 
 
 #End
+
 
