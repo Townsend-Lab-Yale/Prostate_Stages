@@ -1,4 +1,3 @@
-# Load necessary libraries
 library(cancereffectsizeR)
 library(data.table)
 library(ces.refset.hg19)
@@ -164,8 +163,8 @@ ggplot(combined_gene_frequencies, aes(x = genes, y = Frequency_Percentage, fill 
     panel.grid.minor = element_blank()
   )
 
-# Save high-resolution figures
 ggsave("Figure_1.png", width = 12, height = 6, dpi = 600)
 
 #End
+
 
