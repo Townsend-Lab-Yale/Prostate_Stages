@@ -143,9 +143,7 @@ Meta_rate <- mut_rate_df %>%
 cesa_samples_by_groups <- clear_gene_rates(cesa = cesa_samples_by_groups)
 
 # setting gene rates for Early, Late and Metastasis:
-cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Early_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Early"]) 
-cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Late_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Late"]) 
-cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Meta_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Metastasis"]) 
+cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Meta_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason %in% c("Early", "Late", "Metastasis")]) 
 
 # infer trinculeotide-context-specific relative rates of SNV mutation from a mutational signature analysis
 signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
@@ -240,8 +238,7 @@ Meta_rate <- mut_rate_df %>%
 cesa_samples_by_groups <- clear_gene_rates(cesa = cesa_samples_by_groups)
 
 # setting gene rates for Primary and Metastasis:
-cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Primary_rate, missing_genes_take_nearest = T, samples = cesa$samples[Pri_Met=="Primary"]) 
-cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Meta_rate, missing_genes_take_nearest = T, samples = cesa$samples[Pri_Met=="Metastasis"]) 
+cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Meta_rate, missing_genes_take_nearest = T, samples = cesa$samples[Pri_Met %in% c("Primary", "Metastasis")]) 
 
 # infer trinculeotide-context-specific relative rates of SNV mutation from a mutational signature analysis
 signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
@@ -445,4 +442,5 @@ grid.text("Scaled selection coefficient",
 dev.off()
 
 #END
+
 
