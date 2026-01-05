@@ -137,8 +137,7 @@ Meta_rate <- mut_rate_df %>%
 cesa_samples_by_groups <- clear_gene_rates(cesa = cesa_samples_by_groups)
 
 # setting gene rates for Late and Metastasis:
-cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Late_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Late"]) 
-cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Meta_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Metastasis"]) 
+cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Meta_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason %in% c("Late", "Metastasis")]) 
 
 # infer trinculeotide-context-specific relative rates of SNV mutation from a mutational signature analysis
 signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
@@ -236,8 +235,7 @@ Meta_rate <- mut_rate_df %>%
 cesa_samples_by_groups <- clear_gene_rates(cesa = cesa_samples_by_groups)
 
 # setting gene rates for Early and Metastasis:
-cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Early_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Early"]) 
-cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Meta_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason=="Metastasis"]) 
+cesa_samples_by_groups <- set_gene_rates(cesa = cesa_samples_by_groups, rates = Meta_rate, missing_genes_take_nearest = T, samples = cesa$samples[Gleason %in% c("Early, "Metastasis")]) 
 
 # infer trinculeotide-context-specific relative rates of SNV mutation from a mutational signature analysis
 signature_exclusions <- suggest_cosmic_signature_exclusions(cancer_type = "PRAD")
@@ -357,4 +355,5 @@ Figure_4 <- ggplot(combined_selection, aes(x = stage_adjusted, y = si, color = s
  ggsave("Figure_4.png", plot = Figure_4, width = 8, height = 10)
 
 #End
+
 
