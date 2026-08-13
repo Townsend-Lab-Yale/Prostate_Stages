@@ -1,6 +1,6 @@
 # Somatic evolution of prostate cancer: mutation, selection, and epistasis across disease stages.
 
-Computational analysis of somatic evolution across primary and metastatic prostate cancer using large-scale, multi-cohort genomic datasets.
+Computational analysis of somatic evolution across primary and metastatic castration-resistant prostate cancer (mCRPC) using large-scale, multi-cohort genomic datasets.
 
 This repository contains the **R analysis and visualization workflows** supporting our study:
 
@@ -10,9 +10,9 @@ This repository contains the **R analysis and visualization workflows** supporti
 
 ## Project Overview
 
-We analyzed 2,704 primary and metastatic prostate tumors from multiple cohorts and sequencing platforms to characterize how mutation, selection, and genetic interactions shape prostate cancer evolution.
+We analyzed 2,704 primary and mCRPC tumors from multiple cohorts and sequencing platforms to characterize how mutation, selection, and genetic interactions shape prostate cancer evolution.
 
-The study quantifies mutation rates and somatic selection across disease stages and identifies synergistic and antagonistic epistatic interactions among key cancer drivers, revealing a dynamic evolutionary landscape from tumor initiation to metastatic castration-resistant prostate cancer (mCRPC).
+The study quantifies mutation rates and somatic selection across disease stages and identifies synergistic and antagonistic epistatic interactions among key cancer drivers, revealing a dynamic evolutionary landscape from tumor initiation to mCRPC.
 
 The study combines tumors profiled using:
 
@@ -106,19 +106,19 @@ Trinucleotide mutation profiles
 
 `Figure_1_prevalence.R`
 
-Prevalence of variants in 16 selected driver genes, in low-grade primary tumors, high-grade primary tumors, and metastatic castration-resistant prostate cancer.
+Prevalence of variants in 16 selected driver genes, in low-grade primary tumors, high-grade primary tumors, and mCRPC.
 
 ### Trinucleotide Mutation Profiles
 
 `Figure_2_trinucleotide_mutation_profiles.R`
 
-Percent of single-nucleotide somatic variants within each trinucleotide context in low-grade primary tumors, high-grade primary tumors, and metastatic castrate-resistant prostate cancer.
+Percent of single-nucleotide somatic variants within each trinucleotide context in low-grade primary tumors, high-grade primary tumors, and mCRPC.
 
 ### Gene-Specific Mutation Rates
 
 `Figure_3_gene_mutrate.R`
 
-The gene-level mutation rates spanning from organogenesis to low-grade primary tumors, organogenesis to high-grade primary tumors, organogenesis to metastatic castrate-resistant prostate cancer, and in  organogenesis to metastatic castrate-resistant prostate cancer versus organogenesis to low-grade primary tumorigenesis, organogenesis to metastatic castrate-resistant prostate cancer versus organogenesis to high-grade primary tumorigenesis, organogenesis to metastatic castrate-resistant prostate cancer versus primary tumorigenesis. 
+The gene-level mutation rates spanning from organogenesis to low-grade primary tumors, organogenesis to high-grade primary tumors, organogenesis to mCRPC, and in  organogenesis to mCRPC versus organogenesis to low-grade primary tumorigenesis, organogenesis to mCRPC versus organogenesis to high-grade primary tumorigenesis, organogenesis to mCRPC versus primary tumorigenesis. 
 
 ### Cancer Effect Sizes
 
@@ -130,7 +130,7 @@ Gene-level estimates and 95% confidence intervals for scaled selection coefficie
 
 `Figure_5_SPOP.R`
 
-Scaled selection coefficients for recurrent single-nucleotide variant amino-acid substitutions in SPOP during the evolutionary trajectory from prostate organogenesis to primary and metastatic castrate-resistant prostate cancer tumors.
+Scaled selection coefficients for recurrent single-nucleotide variant amino-acid substitutions in SPOP during the evolutionary trajectory from prostate organogenesis to primary and mCRPC tumors.
 
 Related visualization:
 
@@ -142,7 +142,7 @@ SPOP_model_recurrent_resized.png
 
 `Figure_6_AR.R`
 
-Scaled selection coefficients of recurrent single-nucleotide variant amino-acid substitutions in AR along the step from primary tumors to metastatic castrate-resistant prostate cancer.
+Scaled selection coefficients of recurrent single-nucleotide variant amino-acid substitutions in AR along the step from primary tumors to mCRPC.
 
 
 Related visualization:
