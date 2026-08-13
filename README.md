@@ -255,6 +255,15 @@ A typical analysis workflow is:
 *Somatic evolution of prostate cancer: mutation, selection, and epistasis across disease stages.*
 **bioRxiv. 2025.**
 
+## Author
+
+**Moein Rajaei, Ph.D.**
+Computational Biologist | Cancer Genomics & Bioinformatics
+
+* GitHub: https://github.com/moeinrajaei
+* ORCID: https://orcid.org/my-orcid?orcid=0009-0006-7079-2033
+* Google Scholar: https://scholar.google.com/citations?user=LbgtrokAAAAJ&hl=en&oi=ao
+* LinkedIn: https://www.linkedin.com/in/moein-rajaei-ph-d-3a5a136b/
 
 ## Citation
 
